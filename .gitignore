@@ -1,10 +1,11 @@
 /bin
-/target
+*/target
 /.settings/org.eclipse.jdt.core.prefs
 /.settings/org.eclipse.m2e.core.prefs
 /.settings
-/.idea
-/*.iml
+*/.idea
+*/*.iml
+.idea
 /build
 /classes
 /.gradle
