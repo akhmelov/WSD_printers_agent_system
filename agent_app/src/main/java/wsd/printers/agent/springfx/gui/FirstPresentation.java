@@ -1,4 +1,4 @@
-package ro.stancalau.springfx.gui;
+package wsd.printers.agent.springfx.gui;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -8,8 +8,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import org.springframework.beans.factory.annotation.Autowired;
-import ro.stancalau.springfx.control.LanguageController;
-import ro.stancalau.springfx.model.LanguageModel.Language;
+import wsd.printers.agent.springfx.control.LanguageController;
+import wsd.printers.agent.springfx.model.LanguageModel;
 
 public class FirstPresentation extends Presentation {
 
@@ -32,7 +32,7 @@ public class FirstPresentation extends Presentation {
 
     @FXML
     void initialize() {
-        if (Language.RO.equals(langCtr.getLanguage())) {
+        if (LanguageModel.Language.RO.equals(langCtr.getLanguage())) {
             engRadio.setSelected(false);
             romRadio.setSelected(true);
         }

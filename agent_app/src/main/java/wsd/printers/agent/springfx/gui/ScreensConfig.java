@@ -1,4 +1,4 @@
-package ro.stancalau.springfx.gui;
+package wsd.printers.agent.springfx.gui;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
-import ro.stancalau.springfx.model.LanguageModel;
+import wsd.printers.agent.springfx.model.LanguageModel;
 
 import java.net.URL;
 import java.util.Observable;
@@ -82,7 +82,11 @@ public class ScreensConfig implements Observer {
         root.getChildren().remove(node);
     }
 
-    void loadFirst() {
+    public void loadSpecifyAgent() {
+        setNode(getNode(specifyAgentPresentation(), getClass().getResource("SpecifyAgent.fxml")));
+    }
+
+    public void loadFirst() {
         setNode(getNode(firstPresentation(), getClass().getResource("First.fxml")));
     }
 
@@ -113,6 +117,12 @@ public class ScreensConfig implements Observer {
     @Scope("prototype")
     PopupPresentation popupPresentation() {
         return new PopupPresentation(this);
+    }
+
+    @Bean
+    @Scope("prototype")
+    SpecifyAgentPresentation specifyAgentPresentation() {
+        return new SpecifyAgentPresentation(this);
     }
 
     private Node getNode(final Presentation control, URL location) {

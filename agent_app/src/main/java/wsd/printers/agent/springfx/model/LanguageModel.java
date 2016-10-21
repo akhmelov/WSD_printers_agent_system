@@ -1,4 +1,4 @@
-package ro.stancalau.springfx.model;
+package wsd.printers.agent.springfx.model;
 
 import java.util.Locale;
 import java.util.Observable;

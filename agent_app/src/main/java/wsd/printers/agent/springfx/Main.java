@@ -1,4 +1,4 @@
-package ro.stancalau.springfx.gui;
+package wsd.printers.agent.springfx;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -8,8 +8,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
-import ro.stancalau.springfx.config.AppConfig;
-import ro.stancalau.springfx.model.LanguageModel;
+import wsd.printers.agent.springfx.config.AppConfig;
+import wsd.printers.agent.springfx.gui.ScreensConfig;
+import wsd.printers.agent.springfx.model.LanguageModel;
 
 @Service
 public class Main extends Application {
@@ -32,6 +33,6 @@ public class Main extends Application {
         screens.setLangModel(lang);
         screens.setPrimaryStage(stage);
         screens.showMainScreen();
-        screens.loadFirst();
+        screens.loadSpecifyAgent();
     }
 }

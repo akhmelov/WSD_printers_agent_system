@@ -9,7 +9,6 @@
 
     <name>Maven Quick Start Archetype</name>
     <url>http://maven.apache.org</url>
-my-appmy-app
     <dependencies>
         <dependency>
             <groupId>log4j</groupId>

@@ -1,12 +1,12 @@
-package ro.stancalau.springfx.config;
+package wsd.printers.agent.springfx.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import ro.stancalau.springfx.control.LanguageController;
-import ro.stancalau.springfx.gui.ScreensConfig;
-import ro.stancalau.springfx.model.LanguageModel;
-import ro.stancalau.springfx.model.MessageModel;
+import wsd.printers.agent.springfx.control.LanguageController;
+import wsd.printers.agent.springfx.gui.ScreensConfig;
+import wsd.printers.agent.springfx.model.LanguageModel;
+import wsd.printers.agent.springfx.model.MessageModel;
 
 
 @Configuration

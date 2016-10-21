@@ -1,4 +1,4 @@
-package ro.stancalau.springfx.gui;
+package wsd.printers.agent.springfx.gui;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;

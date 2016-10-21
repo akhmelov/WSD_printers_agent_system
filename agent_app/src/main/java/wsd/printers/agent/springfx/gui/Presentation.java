@@ -1,4 +1,4 @@
-package ro.stancalau.springfx.gui;
+package wsd.printers.agent.springfx.gui;
 
 public abstract class Presentation {
 

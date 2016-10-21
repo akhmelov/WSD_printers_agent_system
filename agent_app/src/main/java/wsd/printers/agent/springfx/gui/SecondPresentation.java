@@ -1,4 +1,4 @@
-package ro.stancalau.springfx.gui;
+package wsd.printers.agent.springfx.gui;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -9,7 +9,7 @@ import javafx.scene.control.TextField;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ro.stancalau.springfx.model.MessageModel;
+import wsd.printers.agent.springfx.model.MessageModel;
 
 public class SecondPresentation extends Presentation {
 

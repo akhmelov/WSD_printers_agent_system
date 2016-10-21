@@ -1,8 +1,7 @@
-package ro.stancalau.springfx.control;
+package wsd.printers.agent.springfx.control;
 
 
-import ro.stancalau.springfx.model.LanguageModel;
-import ro.stancalau.springfx.model.LanguageModel.Language;
+import wsd.printers.agent.springfx.model.LanguageModel;
 
 public class LanguageController {
 
@@ -14,14 +13,14 @@ public class LanguageController {
     }
 
     public void toEnglish() {
-        model.setBundle(Language.EN);
+        model.setBundle(LanguageModel.Language.EN);
     }
 
     public void toRomanian() {
-        model.setBundle(Language.RO);
+        model.setBundle(LanguageModel.Language.RO);
     }
 
-    public Language getLanguage() {
+    public LanguageModel.Language getLanguage() {
         return model.getLanguage();
     }
 }
