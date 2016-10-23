@@ -2,8 +2,10 @@ package wsd.printers.agent.springfx.gui;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -25,6 +27,9 @@ public class SpecifyAgentPresentation extends Presentation {
     }
 
     @FXML
+    ChoiceBox agentsList;
+
+    @FXML
     RadioButton engRadio, romRadio;
 
     @FXML
@@ -40,6 +45,7 @@ public class SpecifyAgentPresentation extends Presentation {
 
     @FXML
     void initialize() {
+        //set language
         if (LanguageModel.Language.RO.equals(langCtr.getLanguage())) {
             engRadio.setSelected(false);
             romRadio.setSelected(true);
@@ -49,6 +55,9 @@ public class SpecifyAgentPresentation extends Presentation {
                 changeLanguage();
             }
         });
+
+        //set availible agent list
+        agentsList.setItems(FXCollections.observableArrayList("First", "Second", "Third"));
     }
 
     private void changeLanguage() {

@@ -125,6 +125,12 @@ public class ScreensConfig implements Observer {
         return new SpecifyAgentPresentation(this);
     }
 
+//    @Bean
+//    @Scope("prototype")
+//    SpecifyAgentPresentation specifyAgentPresentation() {
+//        return new SpecifyAgentPresentation(this);
+//    }
+
     private Node getNode(final Presentation control, URL location) {
         FXMLLoader loader = new FXMLLoader(location, lang.getBundle());
         loader.setControllerFactory(new Callback<Class<?>, Object>() {

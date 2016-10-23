@@ -9,14 +9,36 @@
 <?scenebuilder-preview-i18n-resource ../../../../lang_en.properties?>
 <?scenebuilder-stylesheet ../../../../main.css?>
 
-<StackPane fx:id="root" maxHeight="-1.0" maxWidth="-1.0" prefHeight="394.0" prefWidth="594.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="wsd.printers.agent.springfx.gui.SpecifyAgentPresentation">
+<StackPane fx:id="root" maxHeight="-1.0" maxWidth="-1.0" prefHeight="394.0" prefWidth="594.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wsd.printers.agent.springfx.gui.SpecifyAgentPresentation">
     <children>
         <VBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="10.0" StackPane.alignment="CENTER">
             <children>
-                <Label text="%first.label.greeting" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS" />
+            <HBox prefHeight="24.0" prefWidth="494.0">
+               <children>
+                  <TextField promptText="%specify.agent.textField.discoveryServerUrl" />
+                  <TextField promptText="%specify.agent.textField.discoveryServerPort" />
+               </children>
+            </HBox>
+            <VBox prefHeight="93.0" prefWidth="494.0">
+               <children>
+                  <VBox prefHeight="38.0" prefWidth="494.0">
+                     <children>
+                            <Label text="%specify.agent.label.choose.agent" textAlignment="CENTER" wrapText="true" />
+                     </children>
+                  </VBox>
+                  <HBox prefHeight="40.0" prefWidth="494.0">
+                     <children>
+                        <ChoiceBox fx:id="agentsList" prefWidth="150.0" />
+                        <Button mnemonicParsing="false" text="%specify.agent.button.edit" />
+                        <Button mnemonicParsing="false" text="%specify.agent.button.delete" />
+                     </children>
+                  </HBox>
+                  <Button mnemonicParsing="false" text="%specify.agent.button.create" />
+               </children>
+            </VBox>
                 <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="10.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <Button mnemonicParsing="false" onAction="#nextView" prefHeight="50.0" prefWidth="150.0" text="%first.button.nextview" HBox.hgrow="ALWAYS">
+                        <Button mnemonicParsing="false" onAction="#nextView" prefHeight="50.0" prefWidth="150.0" text="%specify.agent.button.nextview" HBox.hgrow="ALWAYS">
                             <HBox.margin>
                                 <Insets />
                             </HBox.margin>
