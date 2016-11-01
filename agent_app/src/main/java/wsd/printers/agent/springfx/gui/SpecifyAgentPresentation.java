@@ -1,69 +1,53 @@
 package wsd.printers.agent.springfx.gui;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
+import com.esotericsoftware.yamlbeans.YamlException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
+import javafx.stage.FileChooser;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import wsd.printers.agent.springfx.control.LanguageController;
-import wsd.printers.agent.springfx.model.LanguageModel;
-import wsd.printers.agent.springfx.model.MessageModel;
+import wsd.printers.agent.springfx.model.AgentConfModel;
+import wsd.printers.agent.springfx.service.SpecifyAgentService;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
 
 /**
  * Created by akhmelov on 10/21/16.
  */
 public class SpecifyAgentPresentation extends Presentation {
 
+    Logger logger = Logger.getLogger(SpecifyAgentPresentation.class);
+
     @Autowired
-    private MessageModel model;
+    private SpecifyAgentService specifyAgentService;
+
+    final FileChooser fileChooser = new FileChooser();
+
 
     public SpecifyAgentPresentation(ScreensConfig config) {
         super(config);
     }
 
     @FXML
-    ChoiceBox agentsList;
-
-    @FXML
-    RadioButton engRadio, romRadio;
-
-    @FXML
-    ToggleGroup langGroup;
-
-    @Autowired
-    private LanguageController langCtr;
-
-    @FXML
     void nextView(ActionEvent event) {
-        config.loadSecond();
+        config.loadDocumentManage();
     }
 
     @FXML
-    void initialize() {
-        //set language
-        if (LanguageModel.Language.RO.equals(langCtr.getLanguage())) {
-            engRadio.setSelected(false);
-            romRadio.setSelected(true);
-        }
-        langGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-                changeLanguage();
+    void configChooseButtonClick(ActionEvent event){
+        List<File> list =
+                fileChooser.showOpenMultipleDialog(config.getStage());
+        if (list != null) {
+            for (File file : list) {
+                try {
+                    AgentConfModel agentConfModel = specifyAgentService.loadAgent(file.getAbsolutePath());
+
+                } catch (FileNotFoundException | YamlException e) {
+                    logger.error(e);
+                }
             }
-        });
-
-        //set availible agent list
-        agentsList.setItems(FXCollections.observableArrayList("First", "Second", "Third"));
-    }
-
-    private void changeLanguage() {
-        if (engRadio.isSelected())
-            langCtr.toEnglish();
-        else
-            langCtr.toRomanian();
+        }
     }
 }

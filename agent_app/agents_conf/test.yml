@@ -1,0 +1,9 @@
+name: Nathan Sweet
+discoveryServerUrl: test_url_test
+color: TRUE
+typeOfPrinter: Lazer
+pageConfModelList:
+  - format: A5
+    durationOnePageSeconds: 5
+  - format: A4
+    durationOnePageSeconds: 7

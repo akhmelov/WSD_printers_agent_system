@@ -9,6 +9,12 @@
 
     <name>Maven Quick Start Archetype</name>
     <url>http://maven.apache.org</url>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>log4j</groupId>
@@ -38,6 +44,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-remote-shell</artifactId>
             <version>1.4.1.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.esotericsoftware.yamlbeans</groupId>
+            <artifactId>yamlbeans</artifactId>
+            <version>1.09</version>
         </dependency>
 
         <dependency>

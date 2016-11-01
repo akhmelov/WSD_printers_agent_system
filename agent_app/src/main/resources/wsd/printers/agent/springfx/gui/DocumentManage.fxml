@@ -13,20 +13,20 @@
     <children>
         <VBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="10.0" StackPane.alignment="CENTER">
             <children>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+                <HBox prefHeight="34.0" prefWidth="494.0">
                <children>
-                  <Button fx:id="CongifChooseButton" mnemonicParsing="false" onAction="#configChooseButtonClick" text="Open agent" />
+                  <Button mnemonicParsing="false" onAction="#loadDocumentButtonAction" text="LoadDocument" />
                </children>
-            </HBox>
-                <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="10.0" VBox.vgrow="ALWAYS">
-                    <children>
-                        <Button mnemonicParsing="false" onAction="#nextView" prefHeight="50.0" prefWidth="150.0" text="%specify.agent.button.nextview" HBox.hgrow="ALWAYS">
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
-                        </Button>
-                    </children>
                 </HBox>
+                <HBox alignment="CENTER" prefHeight="88.0" prefWidth="494.0" spacing="10.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <ChoiceBox fx:id="typeOfPrinterChoose" prefWidth="150.0" />
+                  <ChoiceBox fx:id="paperFormatChoose" prefWidth="150.0" />
+                  <TextField promptText="Expected time to end" />
+               </children>
+                </HBox>
+            <HBox fx:id="expectedTimeTextField" prefHeight="100.0" prefWidth="200.0" />
+            <HBox prefHeight="100.0" prefWidth="200.0" />
             </children>
         </VBox>
     </children>

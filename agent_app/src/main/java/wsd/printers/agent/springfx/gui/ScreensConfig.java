@@ -14,16 +14,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
-import wsd.printers.agent.springfx.model.LanguageModel;
 
 import java.net.URL;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.ResourceBundle;
+import java.util.*;
 
 @Configuration
 @Lazy
-public class ScreensConfig implements Observer {
+public class ScreensConfig {
     private static final Logger logger = LogManager.getLogger(ScreensConfig.class);
 
     public static final int WIDTH = 480;
@@ -32,24 +29,13 @@ public class ScreensConfig implements Observer {
 
     private Stage stage;
     private Scene scene;
-    private LanguageModel lang;
     private StackPane root;
 
     public void setPrimaryStage(Stage primaryStage) {
         this.stage = primaryStage;
     }
 
-    public void setLangModel(LanguageModel lang) {
-        if (this.lang != null) {
-            this.lang.deleteObserver(this);
-        }
-        lang.addObserver(this);
-        this.lang = lang;
-    }
 
-    public ResourceBundle getBundle() {
-        return lang.getBundle();
-    }
 
     public void showMainScreen() {
         root = new StackPane();
@@ -86,37 +72,8 @@ public class ScreensConfig implements Observer {
         setNode(getNode(specifyAgentPresentation(), getClass().getResource("SpecifyAgent.fxml")));
     }
 
-    public void loadFirst() {
-        setNode(getNode(firstPresentation(), getClass().getResource("First.fxml")));
-    }
-
-    void loadSecond() {
-        setNode(getNode(secondPresentation(), getClass().getResource("Second.fxml")));
-    }
-
-    void loadPopup() {
-        ModalDialog modal = new ModalDialog(popupPresentation(), getClass().getResource("Popup.fxml"), stage.getOwner(), lang.getBundle());
-        modal.setTitle(lang.getBundle().getString("popup.title"));
-        modal.getStyleSheets().add(STYLE_FILE);
-        modal.show();
-    }
-
-    @Bean
-    @Scope("prototype")
-    FirstPresentation firstPresentation() {
-        return new FirstPresentation(this);
-    }
-
-    @Bean
-    @Scope("prototype")
-    SecondPresentation secondPresentation() {
-        return new SecondPresentation(this);
-    }
-
-    @Bean
-    @Scope("prototype")
-    PopupPresentation popupPresentation() {
-        return new PopupPresentation(this);
+    public void loadDocumentManage() {
+        setNode(getNode(documentManagePresentation(), getClass().getResource("DocumentManage.fxml")));
     }
 
     @Bean
@@ -125,14 +82,14 @@ public class ScreensConfig implements Observer {
         return new SpecifyAgentPresentation(this);
     }
 
-//    @Bean
-//    @Scope("prototype")
-//    SpecifyAgentPresentation specifyAgentPresentation() {
-//        return new SpecifyAgentPresentation(this);
-//    }
+    @Bean
+    @Scope("prototype")
+    DocumentManagePresentation documentManagePresentation() {
+        return new DocumentManagePresentation(this);
+    }
 
     private Node getNode(final Presentation control, URL location) {
-        FXMLLoader loader = new FXMLLoader(location, lang.getBundle());
+        FXMLLoader loader = new FXMLLoader(location, ResourceBundle.getBundle("lang", new Locale("en")));
         loader.setControllerFactory(new Callback<Class<?>, Object>() {
             public Object call(Class<?> aClass) {
                 return control;
@@ -149,9 +106,5 @@ public class ScreensConfig implements Observer {
 
     public Stage getStage() {
         return stage;
-    }
-
-    public void update(Observable o, Object arg) {
-        loadFirst();
     }
 }

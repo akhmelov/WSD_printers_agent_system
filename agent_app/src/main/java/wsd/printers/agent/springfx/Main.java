@@ -10,7 +10,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Service;
 import wsd.printers.agent.springfx.config.AppConfig;
 import wsd.printers.agent.springfx.gui.ScreensConfig;
-import wsd.printers.agent.springfx.model.LanguageModel;
 
 @Service
 public class Main extends Application {
@@ -28,9 +27,7 @@ public class Main extends Application {
 
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         ScreensConfig screens = context.getBean(ScreensConfig.class);
-        LanguageModel lang = context.getBean(LanguageModel.class);
 
-        screens.setLangModel(lang);
         screens.setPrimaryStage(stage);
         screens.showMainScreen();
         screens.loadSpecifyAgent();
