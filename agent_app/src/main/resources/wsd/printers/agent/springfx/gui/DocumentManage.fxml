@@ -17,6 +17,8 @@
                 <HBox prefHeight="34.0" prefWidth="494.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#loadDocumentButtonAction" text="LoadDocument" />
+                  <Button fx:id="chooseAgentButton" mnemonicParsing="false" onAction="#chooseAgentButtonAction" text="Back to choose agent" />
+                  <Button mnemonicParsing="false" onAction="#agentStateButtonClick" text="Agent state" />
                </children>
                 </HBox>
                 <HBox alignment="CENTER" prefHeight="96.0" prefWidth="494.0" spacing="10.0" VBox.vgrow="ALWAYS">

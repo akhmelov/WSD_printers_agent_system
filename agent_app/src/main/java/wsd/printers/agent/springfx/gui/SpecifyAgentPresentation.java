@@ -32,11 +32,19 @@ public class SpecifyAgentPresentation extends Presentation {
     }
 
     @FXML
-    private Button nextViewButton;
+    private Button documentManageButton;
 
     @FXML
-    void nextView(ActionEvent event) {
+    private Button agentStateButton;
+
+    @FXML
+    void documentManageButtonClick(ActionEvent event) {
         config.loadDocumentManage();
+    }
+
+    @FXML
+    void agentStateButtonClick(ActionEvent event){
+        config.loadAgentState();
     }
 
     @FXML
@@ -47,8 +55,8 @@ public class SpecifyAgentPresentation extends Presentation {
             for (File file : list) {
                 try {
                     AgentConfModel agentConfModel = specifyAgentService.loadAgent(file.getAbsolutePath());
-                    nextViewButton.setDisable(false);
-
+                    documentManageButton.setDisable(false);
+                    agentStateButton.setDisable(false);
                 } catch (FileNotFoundException | YamlException e) {
                     logger.error(e);
                 }

@@ -1,6 +1,5 @@
 package wsd.printers.agent.springfx.gui;
 
-import javafx.beans.value.ObservableListValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -9,11 +8,15 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.stage.FileChooser;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import wsd.printers.agent.springfx.enums.PaperFormatEnum;
 import wsd.printers.agent.springfx.enums.PrinterTypeEnum;
+import wsd.printers.agent.springfx.exception.UnsupportedParametersPresentException;
+import wsd.printers.agent.springfx.service.AgentPrinter;
+import wsd.printers.agent.springfx.service.DocumentManageService;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,6 +26,9 @@ import java.util.List;
 public class DocumentManagePresentation extends Presentation {
 
     Logger logger = Logger.getLogger(DocumentManagePresentation.class);
+
+    @Autowired
+    private DocumentManageService documentManageService;
 
     @FXML
     private ChoiceBox<PrinterTypeEnum> typeOfPrinterChoose;
@@ -55,8 +61,23 @@ public class DocumentManagePresentation extends Presentation {
         if (list != null) {
             for (File file : list) {
                 addEventInfo("Loaded file '" + file.getName() + "'");
+                try {
+                    documentManageService.sayAgentAboutDocument(file, typeOfPrinterChoose.getValue(), paperFormatChoose.getValue());
+                } catch (IOException | UnsupportedParametersPresentException e) {
+                    addEventInfo("Plik jest niepoprawny " + e.getClass());
+                }
             }
         }
+    }
+
+    @FXML
+    void chooseAgentButtonAction(ActionEvent event){
+        config.loadSpecifyAgent();
+    }
+
+    @FXML
+    void agentStateButtonClick(ActionEvent event){
+        config.loadAgentState();
     }
 
     public void addEventInfo(String event){

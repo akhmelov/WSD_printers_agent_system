@@ -10,26 +10,37 @@ import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.*;
 
-@Configuration
-@Lazy
+@Component
 public class ScreensConfig {
     private static final Logger logger = LogManager.getLogger(ScreensConfig.class);
 
-    public static final int WIDTH = 480;
-    public static final int HEIGHT = 320;
+    public static final int WIDTH = 680;
+    public static final int HEIGHT = 420;
     public static final String STYLE_FILE = "main.css";
 
     private Stage stage;
     private Scene scene;
     private StackPane root;
+
+    @Autowired
+    private SpecifyAgentPresentation specifyAgentPresentation;
+
+    @Autowired
+    private DocumentManagePresentation documentManagePresentation;
+
+    @Autowired
+    private AgentStatePresentation agentStatePresentation;
+
 
     public void setPrimaryStage(Stage primaryStage) {
         this.stage = primaryStage;
@@ -69,23 +80,15 @@ public class ScreensConfig {
     }
 
     public void loadSpecifyAgent() {
-        setNode(getNode(specifyAgentPresentation(), getClass().getResource("SpecifyAgent.fxml")));
+        setNode(getNode(specifyAgentPresentation, getClass().getResource("SpecifyAgent.fxml")));
     }
 
     public void loadDocumentManage() {
-        setNode(getNode(documentManagePresentation(), getClass().getResource("DocumentManage.fxml")));
+        setNode(getNode(documentManagePresentation, getClass().getResource("DocumentManage.fxml")));
     }
 
-    @Bean
-    @Scope("prototype")
-    SpecifyAgentPresentation specifyAgentPresentation() {
-        return new SpecifyAgentPresentation(this);
-    }
-
-    @Bean
-    @Scope("prototype")
-    DocumentManagePresentation documentManagePresentation() {
-        return new DocumentManagePresentation(this);
+    public void loadAgentState(){
+        setNode(getNode(agentStatePresentation, getClass().getResource("AgentState.fxml")));
     }
 
     private Node getNode(final Presentation control, URL location) {

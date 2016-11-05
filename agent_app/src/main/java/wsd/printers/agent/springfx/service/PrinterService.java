@@ -2,6 +2,7 @@ package wsd.printers.agent.springfx.service;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+import wsd.printers.agent.springfx.enums.PrinterTypeEnum;
 import wsd.printers.agent.springfx.model.AgentConfModel;
 import wsd.printers.agent.springfx.model.DocumentModel;
 import wsd.printers.agent.springfx.model.PageConfModel;
@@ -29,7 +30,7 @@ public class PrinterService {
             try {
                 DocumentModel documentModel = documentBlockingQueue.take();
                 Optional<PageConfModel> first = agentConfModel.getPageConfModelList()
-                        .stream().filter(p -> p.getFormat().equals(documentModel.getFormat())).findFirst();
+                        .stream().filter(p -> p.getFormat().equals(documentModel.getPaperFormatEnum())).findFirst();
                 if(first.isPresent()){
                     int pages = documentModel.countPages();
                     for(; pages > 0; pages--) {
@@ -60,13 +61,26 @@ public class PrinterService {
         Duration duration = Duration.ZERO;
         for(DocumentModel document: documentBlockingQueue){
             Optional<PageConfModel> first = agentConfModel.getPageConfModelList()
-                    .stream().filter(p -> p.getFormat().equals(document.getFormat())).findFirst();
+                    .stream().filter(p -> p.getFormat().equals(document.getPaperFormatEnum())).findFirst();
 
             if(first.isPresent())
                 duration.plusSeconds(document.countPages() * first.get().getDurationOnePageSeconds());
             else
-                logger.error("Unsupported format in queue: " + document.getFormat());
+                logger.error("Unsupported format in queue: " + document.getPaperFormatEnum());
         }
         return duration;
+    }
+
+    public boolean isDocumentSupported(DocumentModel documentModel){
+        if(!agentConfModel.getTypeOfPrinter().equals(documentModel.getPrinterTypeEnum())
+                && !documentModel.getPrinterTypeEnum().equals(PrinterTypeEnum.None)){
+            return false;
+        }
+        for (PageConfModel pageConfModel: agentConfModel.getPageConfModelList()){
+            if(pageConfModel.getFormat().equals(documentModel.getPaperFormatEnum())){
+                return true;
+            }
+        }
+        return false;
     }
 }

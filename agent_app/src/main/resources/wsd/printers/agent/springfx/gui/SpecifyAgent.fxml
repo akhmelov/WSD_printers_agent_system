@@ -20,13 +20,11 @@
             </HBox>
                 <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="10.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <Button fx:id="nextViewButton" disable="true" mnemonicParsing="false" onAction="#nextView" prefHeight="50.0" prefWidth="150.0" text="%specify.agent.button.nextview" HBox.hgrow="ALWAYS">
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
-                        </Button>
+                  <Button fx:id="documentManageButton" disable="true" mnemonicParsing="false" onAction="#documentManageButtonClick" text="%specify.agent.button.nextview" />
+                  <Button fx:id="agentStateButton" disable="true" mnemonicParsing="false" onAction="#agentStateButtonClick" text="Agent state" />
                     </children>
                 </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" />
             </children>
         </VBox>
     </children>
