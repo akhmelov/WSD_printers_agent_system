@@ -1,5 +1,7 @@
 package wsd.printers.agent.springfx.model;
 
+import wsd.printers.agent.springfx.enums.PrinterTypeEnum;
+
 import java.time.Duration;
 import java.util.List;
 
@@ -10,7 +12,7 @@ public class AgentConfModel {
     private String discoveryServerUrl;
     private String name;
     private Boolean color;
-    private String typeOfPrinter;
+    private PrinterTypeEnum typeOfPrinter;
     private List<PageConfModel> pageConfModelList;
 
     public String getDiscoveryServerUrl() {
@@ -45,11 +47,11 @@ public class AgentConfModel {
         this.color = color;
     }
 
-    public String getTypeOfPrinter() {
+    public PrinterTypeEnum getTypeOfPrinter() {
         return typeOfPrinter;
     }
 
-    public void setTypeOfPrinter(String typeOfPrinter) {
+    public void setTypeOfPrinter(PrinterTypeEnum typeOfPrinter) {
         this.typeOfPrinter = typeOfPrinter;
     }
 
