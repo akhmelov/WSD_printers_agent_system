@@ -39,7 +39,7 @@ public interface AgentPrinter {
      *
      * @return zwraca dokument, ktory zostal zaladowany
      */
-    DocumentModel blockingQueueTake();
+    DocumentModel blockingQueueTake() throws InterruptedException;
 
     /**
      * Zwraca szacowany czas oczekiwania w kolejcy na drukarce podwladnej temu agentowi

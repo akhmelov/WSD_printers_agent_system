@@ -22,11 +22,14 @@ public class AgentPrinterImpl implements AgentPrinter {
     @Autowired
     private DocumentManagePresentation documentManagePresentation;
 
+    @Autowired
+    private PrinterService printerService;
+
     private BlockingQueue<DocumentModel> documentModelBlockingQueue = new LinkedBlockingQueue<>();
 
     @Override
     public AgentConfModel getThisAgentParameters() {
-        return null;
+        return printerService.getAgentConfModel();
     }
 
     @Override
@@ -37,32 +40,32 @@ public class AgentPrinterImpl implements AgentPrinter {
     }
 
     @Override
-    public DocumentModel blockingQueueTake() {
-        return null;
+    public DocumentModel blockingQueueTake() throws InterruptedException {
+        return documentModelBlockingQueue.take();
     }
 
     @Override
     public Duration estimatedQueueDuration() {
-        return null;
+        return printerService.estimatedQueueDuration();
     }
 
     @Override
     public BlockingQueue<Map.Entry<String, StatusOfDocumentEnum>> printHere(DocumentModel documentModel) {
-        return null;
+        return printerService.addToQueue(documentModel);
     }
 
     @Override
     public StatusOfDocumentEnum checkStatus(String idDocument) {
-        return null;
+        return printerService.checkStatus(idDocument);
     }
 
     @Override
     public void informUser(String infoText) {
-
+        documentManagePresentation.addEventInfo(infoText);
     }
 
     @Override
     public boolean isDocumentSupported(DocumentModel documentModel) {
-        return false;
+        return printerService.isDocumentSupported(documentModel);
     }
 }

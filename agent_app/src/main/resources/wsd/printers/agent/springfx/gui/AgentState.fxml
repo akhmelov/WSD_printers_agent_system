@@ -16,18 +16,12 @@
             <children>
                 <HBox prefHeight="34.0" prefWidth="494.0">
                     <children>
-                        <Button mnemonicParsing="false" onAction="#loadDocumentButtonAction" text="LoadDocument" />
+                        <Button mnemonicParsing="false" onAction="#loadScenarioButtonAction" text="Load scenario" />
                         <Button fx:id="chooseAgentButton" mnemonicParsing="false" onAction="#chooseAgentButtonAction" text="Back to choose agent" />
-                        <Button mnemonicParsing="false" onAction="#agentStateButtonClick" text="Agent state" />
+                        <Button mnemonicParsing="false" onAction="#documentManageButtonClick" text="Document manager" />
                     </children>
                 </HBox>
-                <HBox alignment="CENTER" prefHeight="96.0" prefWidth="494.0" spacing="10.0" VBox.vgrow="ALWAYS">
-                    <children>
-                        <ChoiceBox fx:id="typeOfPrinterChoose" prefWidth="150.0" />
-                        <ChoiceBox fx:id="paperFormatChoose" prefWidth="150.0" />
-                        <TextField promptText="Expected time to end" />
-                    </children>
-                </HBox>
+                <HBox alignment="CENTER" prefHeight="96.0" prefWidth="494.0" spacing="10.0" VBox.vgrow="ALWAYS" />
                 <ScrollPane prefHeight="200.0" prefWidth="200.0">
                     <content>
                         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
