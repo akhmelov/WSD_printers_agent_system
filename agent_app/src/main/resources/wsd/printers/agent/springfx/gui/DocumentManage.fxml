@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.web.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.geometry.*?>
@@ -18,15 +19,22 @@
                   <Button mnemonicParsing="false" onAction="#loadDocumentButtonAction" text="LoadDocument" />
                </children>
                 </HBox>
-                <HBox alignment="CENTER" prefHeight="88.0" prefWidth="494.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                <HBox alignment="CENTER" prefHeight="96.0" prefWidth="494.0" spacing="10.0" VBox.vgrow="ALWAYS">
                <children>
                   <ChoiceBox fx:id="typeOfPrinterChoose" prefWidth="150.0" />
                   <ChoiceBox fx:id="paperFormatChoose" prefWidth="150.0" />
                   <TextField promptText="Expected time to end" />
                </children>
                 </HBox>
-            <HBox fx:id="expectedTimeTextField" prefHeight="100.0" prefWidth="200.0" />
-            <HBox prefHeight="100.0" prefWidth="200.0" />
+            <ScrollPane prefHeight="200.0" prefWidth="200.0">
+              <content>
+                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
+                     <children>
+                        <ListView fx:id="returnInfoListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="177.0" prefWidth="494.0" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </ScrollPane>
             </children>
         </VBox>
     </children>

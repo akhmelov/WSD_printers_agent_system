@@ -3,6 +3,7 @@ package wsd.printers.agent.springfx.gui;
 import com.esotericsoftware.yamlbeans.YamlException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ public class SpecifyAgentPresentation extends Presentation {
     }
 
     @FXML
+    private Button nextViewButton;
+
+    @FXML
     void nextView(ActionEvent event) {
         config.loadDocumentManage();
     }
@@ -43,6 +47,7 @@ public class SpecifyAgentPresentation extends Presentation {
             for (File file : list) {
                 try {
                     AgentConfModel agentConfModel = specifyAgentService.loadAgent(file.getAbsolutePath());
+                    nextViewButton.setDisable(false);
 
                 } catch (FileNotFoundException | YamlException e) {
                     logger.error(e);
