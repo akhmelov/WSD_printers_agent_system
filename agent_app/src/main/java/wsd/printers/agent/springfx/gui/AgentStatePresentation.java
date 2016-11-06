@@ -33,12 +33,12 @@ public class AgentStatePresentation extends Presentation {
     }
 
     @FXML
-    private void documentManageButtonClick(ActionEvent event){
+    void documentManageButtonClick(ActionEvent event){
         config.loadDocumentManage();
     }
 
     @FXML
-    private void loadScenarioButtonAction(ActionEvent event){
+    void loadScenarioButtonAction(ActionEvent event){
         List<File> list =
                 fileChooser.showOpenMultipleDialog(config.getStage());
         if (list != null) {

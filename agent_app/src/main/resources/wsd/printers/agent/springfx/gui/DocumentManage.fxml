@@ -25,7 +25,6 @@
                <children>
                   <ChoiceBox fx:id="typeOfPrinterChoose" prefWidth="150.0" />
                   <ChoiceBox fx:id="paperFormatChoose" prefWidth="150.0" />
-                  <TextField promptText="Expected time to end" />
                </children>
                 </HBox>
             <ScrollPane prefHeight="200.0" prefWidth="200.0">

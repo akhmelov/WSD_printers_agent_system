@@ -18,10 +18,15 @@
                     <children>
                         <Button mnemonicParsing="false" onAction="#loadScenarioButtonAction" text="Load scenario" />
                         <Button fx:id="chooseAgentButton" mnemonicParsing="false" onAction="#chooseAgentButtonAction" text="Back to choose agent" />
-                        <Button mnemonicParsing="false" onAction="#documentManageButtonClick" text="Document manager" />
+                        <Button mnemonicParsing="false" onAction="#documentManageButtonClick" text="Document manage" />
                     </children>
                 </HBox>
-                <HBox alignment="CENTER" prefHeight="96.0" prefWidth="494.0" spacing="10.0" VBox.vgrow="ALWAYS" />
+                <HBox alignment="CENTER" prefHeight="96.0" prefWidth="494.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <ChoiceBox prefWidth="150.0" />
+                        <ChoiceBox prefWidth="150.0" />
+                    </children>
+                </HBox>
                 <ScrollPane prefHeight="200.0" prefWidth="200.0">
                     <content>
                         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
