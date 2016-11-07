@@ -48,6 +48,13 @@ public interface AgentPrinter {
     Duration estimatedQueueDuration();
 
     /**
+     * Oszacowanie czas trwania drukowania dokumentu na tej drukarce
+     * @param documentModel
+     * @return
+     */
+    Duration estimateDocumentDuration(DocumentModel documentModel);
+
+    /**
      * Wrzucanie do kolejki do druku na tym komputerze
      * @param documentModel
      * @return Kolejka blokujaca do, ktorej beda trafialy eventy, co sie dzieje z tym dokumentem

@@ -68,4 +68,9 @@ public class AgentPrinterImpl implements AgentPrinter {
     public boolean isDocumentSupported(DocumentModel documentModel) {
         return printerService.isDocumentSupported(documentModel);
     }
+
+    @Override
+    public Duration estimateDocumentDuration(DocumentModel documentModel) {
+        throw new UnsupportedOperationException();
+    }
 }

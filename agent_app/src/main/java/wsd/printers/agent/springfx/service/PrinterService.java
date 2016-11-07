@@ -33,10 +33,13 @@ public class PrinterService {
     private AgentConfModel agentConfModel;
     private BlockingQueue<Map.Entry<String, DocumentModel>> documentBlockingQueue = new LinkedBlockingQueue<>();
     private Map<String, BlockingQueue<Map.Entry<String, StatusOfDocumentEnum>>> statusOfDocumentEnumMap = new HashMap();
+    private Thread printerThread;
+    private boolean isPaperPresent = true;
+    private boolean isInkPresent = true;
 
     @PostConstruct
     public void init(){
-        Thread thread = new Thread(() -> {
+        this.printerThread = new Thread(() -> {
             Map.Entry<String, DocumentModel> document = null;
             BlockingQueue<Map.Entry<String, StatusOfDocumentEnum>> blockingQueue = null;
             try {
@@ -51,6 +54,9 @@ public class PrinterService {
                 if(first.isPresent()){
                     int pages = documentModel.countPages();
                     for(; pages > 0; pages--) {
+                        while (!isPaperPresent || !isInkPresent){
+                            Thread.sleep(1000);
+                        }
                         Thread.sleep(first.get().getDurationOnePageSeconds() * 1000);
                     }
                     // TODO: 11/1/16 documentModel to pdf somewhere
@@ -61,7 +67,7 @@ public class PrinterService {
                 blockingQueue.add(new AbstractMap.SimpleEntry(document.getKey(), StatusOfDocumentEnum.FAILD));
             }
         });
-        thread.start();
+        this.printerThread.start();
     }
 
     public void loadConfig(AgentConfModel agentConfModel){
@@ -126,5 +132,29 @@ public class PrinterService {
         if(first.isPresent())
             return first.get().getValue();
         return null;
+    }
+
+    public void pausePrinting() throws InterruptedException {
+        printerThread.wait();
+    }
+
+    public void resumePrinting(){
+        printerThread.notify();
+    }
+
+    public boolean isPaperPresent() {
+        return isPaperPresent;
+    }
+
+    public void setPaperPresent(boolean paperPresent) {
+        isPaperPresent = paperPresent;
+    }
+
+    public boolean isInkPresent() {
+        return isInkPresent;
+    }
+
+    public void setInkPresent(boolean inkPresent) {
+        isInkPresent = inkPresent;
     }
 }

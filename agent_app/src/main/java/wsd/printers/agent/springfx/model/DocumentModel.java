@@ -11,9 +11,9 @@ import java.util.List;
  * Created by akhmelov on 11/1/16.
  */
 public class DocumentModel {
-    private PDDocument file;
-    private PrinterTypeEnum printerTypeEnum;
-    private PaperFormatEnum paperFormatEnum;
+    protected PDDocument file;
+    protected PrinterTypeEnum printerTypeEnum;
+    protected PaperFormatEnum paperFormatEnum;
 
     public DocumentModel() {
     }

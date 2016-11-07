@@ -22,10 +22,11 @@
                     </children>
                 </HBox>
                 <HBox alignment="CENTER" prefHeight="96.0" prefWidth="494.0" spacing="10.0" VBox.vgrow="ALWAYS">
-                    <children>
-                        <ChoiceBox prefWidth="150.0" />
-                        <ChoiceBox prefWidth="150.0" />
-                    </children>
+               <children>
+                  <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseButtonAction" text="Pause" />
+                  <Button fx:id="noPaperButton" mnemonicParsing="false" onAction="#noPaperButtonAction" text="No paper" />
+                  <Button fx:id="noInkButton" mnemonicParsing="false" onAction="#noInkButtonAction" text="No ink" />
+               </children>
                 </HBox>
                 <ScrollPane prefHeight="200.0" prefWidth="200.0">
                     <content>
