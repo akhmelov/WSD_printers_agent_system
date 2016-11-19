@@ -7,47 +7,33 @@ import wsd.printers.agent.springfx.enums.PrinterTypeEnum;
 /**
  * Created by akhmelov on 11/7/16.
  */
-public class DocumentModelTest  {
+public class DocumentModelTest extends DocumentModel {
     protected int pagesNumber;
-    protected PrinterTypeEnum printerTypeEnum;
-    protected PaperFormatEnum paperFormatEnum;
 
-
+    @Override
     public int countPages() {
         return pagesNumber;
     }
 
-
+    @Override
     public void setPrinterTypeEnum(PrinterTypeEnum printerTypeEnum) {
-        this.printerTypeEnum = printerTypeEnum;
-//        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
-
-    public PaperFormatEnum getPaperFormatEnum() {
-        return getPaperFormatEnum();
-    }
-
-
-    public PrinterTypeEnum getPrinterTypeEnum() {
-        return getPrinterTypeEnum();
-    }
-
-
+    @Override
     public void setPaperFormatEnum(PaperFormatEnum paperFormatEnum) {
-        this.paperFormatEnum = paperFormatEnum;
-//        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
+    @Override
+    public PDDocument getFile() {
+        throw new UnsupportedOperationException();
+    }
 
-//    public PDDocument getFile() {
-//        throw new UnsupportedOperationException();
-//    }
-//
-//
-//    public void setFile(PDDocument file) {
-//        throw new UnsupportedOperationException();
-//    }
+    @Override
+    public void setFile(PDDocument file) {
+        throw new UnsupportedOperationException();
+    }
 
     public DocumentModelTest(int pagesNumber, PrinterTypeEnum printerTypeEnum, PaperFormatEnum paperFormatEnum) {
         this.pagesNumber = pagesNumber;

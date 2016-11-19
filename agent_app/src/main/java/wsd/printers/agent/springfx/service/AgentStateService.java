@@ -4,6 +4,8 @@ import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import wsd.printers.agent.springfx.enums.PaperFormatEnum;
+import wsd.printers.agent.springfx.enums.PrinterTypeEnum;
 import wsd.printers.agent.springfx.model.DocumentModelTest;
 import wsd.printers.agent.springfx.model.TestScenarioPrints;
 
@@ -11,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,8 +29,12 @@ public class AgentStateService {
     public void loadScenario(String filename) throws FileNotFoundException, YamlException {
         YamlReader yamlReader = new YamlReader(new FileReader(filename));
         TestScenarioPrints testScenarioPrints = yamlReader.read(TestScenarioPrints.class);
-        for (DocumentModelTest documentModelTest: testScenarioPrints.getDocumentModelTests()){
-//            printerService.addToQueue(documentModelTest);
+        for (HashMap hashMap: testScenarioPrints.getDocumentModelTests()){
+            DocumentModelTest documentModelTest
+                    = new DocumentModelTest(Integer.valueOf((String) hashMap.get("pagesNumber")),
+                    PrinterTypeEnum.valueOf((String) hashMap.get("printerTypeEnum")),
+                    PaperFormatEnum.valueOf((String) hashMap.get("paperFormatEnum")));
+            printerService.addToQueue(documentModelTest);
         }
     }
 }
