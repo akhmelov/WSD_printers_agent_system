@@ -31,6 +31,7 @@ public class AlgorithmService {
         while (true){
             try {
                 DocumentModel documentModel = agentPrinter.blockingQueueTake(); //to sie zawieszamy i czekamy poki cos do nas przyjdzie
+                logger.debug("Algorithm document: " + documentModel.toString());
                 // TODO: 12/10/16 logikka algorytmu
             } catch (InterruptedException e) {
                 logger.error(e);

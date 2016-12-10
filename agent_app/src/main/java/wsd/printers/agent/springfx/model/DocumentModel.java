@@ -51,4 +51,13 @@ public class DocumentModel {
     public void setPaperFormatEnum(PaperFormatEnum paperFormatEnum) {
         this.paperFormatEnum = paperFormatEnum;
     }
+
+    @Override
+    public String toString() {
+        return "DocumentModel{" +
+                "file=" + file +
+                ", printerTypeEnum=" + printerTypeEnum +
+                ", paperFormatEnum=" + paperFormatEnum +
+                '}';
+    }
 }
