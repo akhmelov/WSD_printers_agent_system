@@ -73,6 +73,7 @@ public class PrinterService {
                 }
             }
         });
+        this.printerThread.setDaemon(true);
         this.printerThread.start();
     }
 
