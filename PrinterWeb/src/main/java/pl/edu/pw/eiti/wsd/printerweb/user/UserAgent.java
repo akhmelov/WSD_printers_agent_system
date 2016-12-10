@@ -12,8 +12,10 @@ public class UserAgent extends RoleBasedAgent {
 
     private static final long serialVersionUID = -3135506373065999424L;
 
-    private Collection<? extends AgentRole> roles;
-
+    /**
+     * @param roles
+     *      Collection of roles which should be applied to this agent. Not null.
+     */
     public UserAgent(Collection<? extends AgentRole> roles) {
         super(roles);
     }
