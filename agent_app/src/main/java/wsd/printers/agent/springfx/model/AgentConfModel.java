@@ -4,6 +4,7 @@ import wsd.printers.agent.springfx.enums.PrinterTypeEnum;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ public class AgentConfModel {
     private String name;
     private Boolean color;
     private PrinterTypeEnum typeOfPrinter;
-    private List<PageConfModel> pageConfModelList = new ArrayList<>();
+    private List<HashMap> pageConfModelList = new ArrayList<>();
 
     public String getDiscoveryServerUrl() {
         return discoveryServerUrl;
@@ -32,11 +33,11 @@ public class AgentConfModel {
         this.name = name;
     }
 
-    public List<PageConfModel> getPageConfModelList() {
+    public List<HashMap> getPageConfModelList() {
         return pageConfModelList;
     }
 
-    public void setPageConfModelList(List<PageConfModel> pageConfModelList) {
+    public void setPageConfModelList(List<HashMap> pageConfModelList) {
         this.pageConfModelList = pageConfModelList;
     }
 

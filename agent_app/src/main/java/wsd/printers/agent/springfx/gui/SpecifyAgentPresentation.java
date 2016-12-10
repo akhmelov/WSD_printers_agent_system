@@ -4,10 +4,15 @@ import com.esotericsoftware.yamlbeans.YamlException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
 import javafx.stage.FileChooser;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import wsd.printers.agent.springfx.model.AgentConfModel;
+import wsd.printers.agent.springfx.service.AgentStateService;
+import wsd.printers.agent.springfx.service.DocumentManageService;
+import wsd.printers.agent.springfx.service.PrinterService;
 import wsd.printers.agent.springfx.service.SpecifyAgentService;
 
 import java.io.File;
@@ -24,6 +29,9 @@ public class SpecifyAgentPresentation extends Presentation {
     @Autowired
     private SpecifyAgentService specifyAgentService;
 
+    @Autowired
+    private PrinterService printerService;
+
     final FileChooser fileChooser = new FileChooser();
 
 
@@ -35,16 +43,8 @@ public class SpecifyAgentPresentation extends Presentation {
     private Button documentManageButton;
 
     @FXML
-    private Button agentStateButton;
-
-    @FXML
     void documentManageButtonClick(ActionEvent event) {
         config.loadDocumentManage();
-    }
-
-    @FXML
-    void agentStateButtonClick(ActionEvent event){
-        config.loadAgentState();
     }
 
     @FXML
@@ -55,12 +55,17 @@ public class SpecifyAgentPresentation extends Presentation {
             for (File file : list) {
                 try {
                     AgentConfModel agentConfModel = specifyAgentService.loadAgent(file.getAbsolutePath());
+                    printerService.loadConfig(agentConfModel);
                     documentManageButton.setDisable(false);
-                    agentStateButton.setDisable(false);
                 } catch (FileNotFoundException | YamlException e) {
                     logger.error(e);
                 }
             }
         }
+    }
+
+    @FXML
+    void chooseAgentButtonAction(ActionEvent event){
+        config.loadSpecifyAgent();
     }
 }

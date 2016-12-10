@@ -2,7 +2,6 @@ package wsd.printers.agent.springfx.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
-import wsd.printers.agent.springfx.gui.AgentStatePresentation;
 import wsd.printers.agent.springfx.gui.DocumentManagePresentation;
 import wsd.printers.agent.springfx.gui.ScreensConfig;
 import wsd.printers.agent.springfx.gui.SpecifyAgentPresentation;
@@ -29,11 +28,5 @@ public class AppConfig {
     @Autowired
     DocumentManagePresentation documentManagePresentation(ScreensConfig screensConfig) {
         return new DocumentManagePresentation(screensConfig);
-    }
-
-    @Bean
-    @Autowired
-    AgentStatePresentation agentStatePresentation(ScreensConfig screensConfig){
-        return new AgentStatePresentation(screensConfig);
     }
 }

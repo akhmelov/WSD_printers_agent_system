@@ -3,6 +3,7 @@ package wsd.printers.agent.springfx.service;
 import org.apache.log4j.Logger;
 import org.codehaus.groovy.runtime.metaclass.ConcurrentReaderHashMap;
 import org.springframework.stereotype.Service;
+import wsd.printers.agent.springfx.enums.PaperFormatEnum;
 import wsd.printers.agent.springfx.enums.PrinterTypeEnum;
 import wsd.printers.agent.springfx.enums.StatusOfDocumentEnum;
 import wsd.printers.agent.springfx.model.AgentConfModel;
@@ -40,31 +41,36 @@ public class PrinterService {
     @PostConstruct
     public void init(){
         this.printerThread = new Thread(() -> {
-            Map.Entry<String, DocumentModel> document = null;
-            BlockingQueue<Map.Entry<String, StatusOfDocumentEnum>> blockingQueue = null;
-            try {
-                document = documentBlockingQueue.take();
-                DocumentModel documentModel = document.getValue();
+            while (true){
+                Map.Entry<String, DocumentModel> document = null;
+                BlockingQueue<Map.Entry<String, StatusOfDocumentEnum>> blockingQueue = null;
+                try {
+                    document = documentBlockingQueue.take();
+                    DocumentModel documentModel = document.getValue();
 
-                blockingQueue = statusOfDocumentEnumMap.get(document.getKey());
-                blockingQueue.add(new AbstractMap.SimpleEntry(document.getKey(), StatusOfDocumentEnum.PRINTING));
-                Optional<PageConfModel> first = agentConfModel.getPageConfModelList()
-                        .stream().filter(p -> p.getFormat().equals(documentModel.getPaperFormatEnum())).findFirst();
+                    blockingQueue = statusOfDocumentEnumMap.get(document.getKey());
+                    blockingQueue.add(new AbstractMap.SimpleEntry(document.getKey(), StatusOfDocumentEnum.PRINTING));
+                    Optional<HashMap> first = agentConfModel.getPageConfModelList()
+                            .stream().filter(
+                                    p -> PaperFormatEnum.valueOf((String) p.get("format")).equals(documentModel.getPaperFormatEnum())
+                            ).findFirst();
 
-                if(first.isPresent()){
-                    int pages = documentModel.countPages();
-                    for(; pages > 0; pages--) {
-                        while (!isPaperPresent || !isInkPresent){
-                            Thread.sleep(1000);
+                    if(first.isPresent()){
+                        int pages = documentModel.countPages();
+                        for(; pages > 0; pages--) {
+                            while (!isPaperPresent || !isInkPresent){
+                                Thread.sleep(1000);
+                            }
+                            Thread.sleep(Integer.valueOf((String) first.get().get("durationOnePageSeconds")) * 1000);
                         }
-                        Thread.sleep(first.get().getDurationOnePageSeconds() * 1000);
+                        // TODO: 11/1/16 documentModel to pdf somewhere
+                        blockingQueue.add(new AbstractMap.SimpleEntry(document.getKey(), StatusOfDocumentEnum.PRINTED));
+                        logger.debug("Printed document id: '" + document.getKey());
                     }
-                    // TODO: 11/1/16 documentModel to pdf somewhere
-                    blockingQueue.add(new AbstractMap.SimpleEntry(document.getKey(), StatusOfDocumentEnum.PRINTED));
+                } catch (InterruptedException e) {
+                    logger.error(e);
+                    blockingQueue.add(new AbstractMap.SimpleEntry(document.getKey(), StatusOfDocumentEnum.FAILD));
                 }
-            } catch (InterruptedException e) {
-                logger.error(e);
-                blockingQueue.add(new AbstractMap.SimpleEntry(document.getKey(), StatusOfDocumentEnum.FAILD));
             }
         });
         this.printerThread.start();
@@ -80,9 +86,9 @@ public class PrinterService {
         do {
             key = new BigInteger(130, random).toString(32);;
         } while (statusOfDocumentEnumMap.containsKey(key));
-        documentBlockingQueue.add(new AbstractMap.SimpleEntry(key, document));
-        blockingQueue.add(new AbstractMap.SimpleEntry(key, StatusOfDocumentEnum.WAIT_IN_PRINTER_QUEUE));
         statusOfDocumentEnumMap.put(key, blockingQueue);
+        blockingQueue.add(new AbstractMap.SimpleEntry(key, StatusOfDocumentEnum.WAIT_IN_PRINTER_QUEUE));
+        documentBlockingQueue.add(new AbstractMap.SimpleEntry(key, document));
         return blockingQueue;
     }
 
@@ -94,11 +100,11 @@ public class PrinterService {
         Duration duration = Duration.ZERO;
         for(Map.Entry<String, DocumentModel> queue: documentBlockingQueue){
             DocumentModel document = queue.getValue();
-            Optional<PageConfModel> first = agentConfModel.getPageConfModelList()
-                    .stream().filter(p -> p.getFormat().equals(document.getPaperFormatEnum())).findFirst();
+            Optional<HashMap> first = agentConfModel.getPageConfModelList()
+                    .stream().filter(p -> PaperFormatEnum.valueOf((String) p.get("format")).equals(document.getPaperFormatEnum())).findFirst();
 
             if(first.isPresent())
-                duration.plusSeconds(document.countPages() * first.get().getDurationOnePageSeconds());
+                duration.plusSeconds(document.countPages() * Integer.valueOf((String) first.get().get("durationOnePageSeconds")));
             else
                 logger.error("Unsupported format in queue: " + document.getPaperFormatEnum());
         }
@@ -110,8 +116,8 @@ public class PrinterService {
                 && !documentModel.getPrinterTypeEnum().equals(PrinterTypeEnum.None)){
             return false;
         }
-        for (PageConfModel pageConfModel: agentConfModel.getPageConfModelList()){
-            if(pageConfModel.getFormat().equals(documentModel.getPaperFormatEnum())){
+        for (HashMap pageConfModel: agentConfModel.getPageConfModelList()){
+            if(PaperFormatEnum.valueOf((String) pageConfModel.get("format")).equals(documentModel.getPaperFormatEnum())){
                 return true;
             }
         }

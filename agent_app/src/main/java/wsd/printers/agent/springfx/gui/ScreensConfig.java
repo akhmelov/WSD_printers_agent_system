@@ -38,9 +38,6 @@ public class ScreensConfig {
     @Autowired
     private DocumentManagePresentation documentManagePresentation;
 
-    @Autowired
-    private AgentStatePresentation agentStatePresentation;
-
 
     public void setPrimaryStage(Stage primaryStage) {
         this.stage = primaryStage;
@@ -85,10 +82,6 @@ public class ScreensConfig {
 
     public void loadDocumentManage() {
         setNode(getNode(documentManagePresentation, getClass().getResource("DocumentManage.fxml")));
-    }
-
-    public void loadAgentState(){
-        setNode(getNode(agentStatePresentation, getClass().getResource("AgentState.fxml")));
     }
 
     private Node getNode(final Presentation control, URL location) {
