@@ -1,7 +1,9 @@
 package wsd.printers.agent.springfx.config;
 
+import jade.core.Agent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
+import wsd.printers.agent.springfx.BuyerAgent;
 import wsd.printers.agent.springfx.gui.DocumentManagePresentation;
 import wsd.printers.agent.springfx.gui.ScreensConfig;
 
@@ -21,5 +23,10 @@ public class AppConfig {
     @Autowired
     DocumentManagePresentation documentManagePresentation(ScreensConfig screensConfig) {
         return new DocumentManagePresentation(screensConfig);
+    }
+
+    @Bean
+    Agent getAgentBuyer(){
+        return BuyerAgent.getInstance();
     }
 }

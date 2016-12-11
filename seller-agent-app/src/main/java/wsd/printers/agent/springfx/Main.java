@@ -1,5 +1,6 @@
 package wsd.printers.agent.springfx;
 
+import jade.Boot;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -10,11 +11,15 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Service;
 import wsd.printers.agent.springfx.config.AppConfig;
 import wsd.printers.agent.springfx.gui.ScreensConfig;
+import wsd.printers.agent.springfx.service.AgentPrinter;
 
 @Service
 public class Main extends Application {
 
     private static final Logger logger = LogManager.getLogger(Main.class);
+
+    public static AgentPrinter agentPrinter;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -27,6 +32,8 @@ public class Main extends Application {
 
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         ScreensConfig screens = context.getBean(ScreensConfig.class);
+
+        Boot.main(new String[]{"src/main/resources/jade-agent-container.properties"});
 
         screens.setPrimaryStage(stage);
         screens.showMainScreen();

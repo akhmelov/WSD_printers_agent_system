@@ -1,27 +1,29 @@
 package wsd.printers.agent.springfx;
 
 import jade.core.Agent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import wsd.printers.agent.springfx.config.AppConfig;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
+import wsd.printers.agent.springfx.service.AgentPrinter;
 
 /**
  * Created by akhmelov on 12/11/16.
  */
 public class SellerAgentMain extends Agent {
 
-    private static final Logger logger = LogManager.getLogger(SellerAgentMain.class);
+    private static final jade.util.Logger loggerJade = jade.util.Logger.getMyLogger(SellerAgentMain.class.getName());
 
     @Override
     public void setup(){;
-        logger.error("=======================================================================================================================================================Start command");
-        final String otherAgentName = (String) this.getArguments()[0];
-        logger.info("Agent is starting ---------------------------------------------------------------------");
-        Thread thread = new Thread(() -> Main.launch(Main.class));
-        thread.setDaemon(true);
-        thread.start();
-        logger.error("====================================================================================================================================================xy=Ended command");
+        loggerJade.info("Seller-agent " + getAID().getName() + " ran.");
+        addBehaviour(new OverbearingBehaviour());
+    }
+
+    public class OverbearingBehaviour extends CyclicBehaviour {
+        public void action() {
+            ACLMessage msg = myAgent.receive();
+            if(msg == null)
+                block();
+            loggerJade.info("Event cames to as");
+        }
     }
 }
