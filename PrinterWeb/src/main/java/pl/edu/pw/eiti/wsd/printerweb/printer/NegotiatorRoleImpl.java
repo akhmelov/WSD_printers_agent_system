@@ -1,25 +1,14 @@
 package pl.edu.pw.eiti.wsd.printerweb.printer;
 
-import java.util.Collection;
-
-import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
-import pl.edu.pw.eiti.wsd.printerweb.RoleBasedAgent;
+import jade.lang.acl.ACLMessage;
 
 public class NegotiatorRoleImpl implements NegotiatorRole {
 
     @Override
-    public Collection<Behaviour> getBehaviours(RoleBasedAgent agent) {
-        // TODO Auto-generated method stub
-        return null;
+    public ACLMessage handleProposal(ACLMessage cfp) {
+        ACLMessage reply = cfp.createReply();
+        reply.setPerformative(ACLMessage.PROPOSE);
+        return reply;
     }
 
-    private static class NegotiatorBehaviour extends CyclicBehaviour {
-
-        @Override
-        public void action() {
-            // TODO Auto-generated method stub
-
-        }
-    }
 }
