@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import wsd.printers.agent.springfx.gui.DocumentManagePresentation;
 import wsd.printers.agent.springfx.gui.ScreensConfig;
-import wsd.printers.agent.springfx.gui.SpecifyAgentPresentation;
 
 
 @Configuration
@@ -16,12 +15,6 @@ public class AppConfig {
     @Bean
     ScreensConfig screensConfig(){
         return new ScreensConfig();
-    }
-
-    @Bean
-    @Autowired
-    SpecifyAgentPresentation specifyAgentPresentation(ScreensConfig screensConfig) {
-        return new SpecifyAgentPresentation(screensConfig);
     }
 
     @Bean
