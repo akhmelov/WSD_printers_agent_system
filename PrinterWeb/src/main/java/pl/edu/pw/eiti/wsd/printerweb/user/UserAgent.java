@@ -1,8 +1,7 @@
 package pl.edu.pw.eiti.wsd.printerweb.user;
 
-import java.util.Collection;
+import java.util.Collections;
 
-import pl.edu.pw.eiti.wsd.printerweb.AgentRole;
 import pl.edu.pw.eiti.wsd.printerweb.RoleBasedAgent;
 
 /**
@@ -13,10 +12,9 @@ public class UserAgent extends RoleBasedAgent {
     private static final long serialVersionUID = -3135506373065999424L;
 
     /**
-     * @param roles
-     *      Collection of roles which should be applied to this agent. Not null.
+     *
      */
-    public UserAgent(Collection<? extends AgentRole> roles) {
-        super(roles);
+    public UserAgent() {
+        super(Collections.singleton(new UserRoleImpl()));
     }
 }

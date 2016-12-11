@@ -18,5 +18,5 @@ public interface AgentRole {
      * @return
      *      All behaviors played by this role. Never null.
      */
-    abstract Collection<Behaviour> getBehaviours(final Agent agent);
+    abstract Collection<Behaviour> getBehaviours(final RoleBasedAgent agent);
 }

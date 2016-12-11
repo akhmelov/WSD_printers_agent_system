@@ -47,4 +47,12 @@ public abstract class RoleBasedAgent extends Agent {
             }
         }
     }
+    
+    public void errorOccured() {
+        
+    }
+    
+    public void readyToWork() {
+        
+    }
 }
