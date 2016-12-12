@@ -1,8 +1,8 @@
 package wsd.printers.agent.userAgent.model;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import wsd.printers.agent.userAgent.enums.PaperFormatEnum;
-import wsd.printers.agent.userAgent.enums.PrinterTypeEnum;
+import wsd.printers.agent.common.enums.PaperFormatEnum;
+import wsd.printers.agent.common.enums.PrinterTypeEnum;
 
 /**
  * Created by akhmelov on 11/7/16.

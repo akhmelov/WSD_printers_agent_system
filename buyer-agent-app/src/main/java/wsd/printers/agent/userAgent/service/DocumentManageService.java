@@ -3,8 +3,8 @@ package wsd.printers.agent.userAgent.service;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import wsd.printers.agent.userAgent.enums.PaperFormatEnum;
-import wsd.printers.agent.userAgent.enums.PrinterTypeEnum;
+import wsd.printers.agent.common.enums.PaperFormatEnum;
+import wsd.printers.agent.common.enums.PrinterTypeEnum;
 import wsd.printers.agent.userAgent.exception.UnsupportedParametersPresentException;
 import wsd.printers.agent.userAgent.model.DocumentModel;
 

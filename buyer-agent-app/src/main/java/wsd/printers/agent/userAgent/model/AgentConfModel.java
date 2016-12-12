@@ -1,6 +1,6 @@
 package wsd.printers.agent.userAgent.model;
 
-import wsd.printers.agent.userAgent.enums.PrinterTypeEnum;
+import wsd.printers.agent.common.enums.PrinterTypeEnum;
 
 import java.util.ArrayList;
 import java.util.HashMap;

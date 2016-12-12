@@ -2,7 +2,7 @@ package wsd.printers.agent.userAgent.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import wsd.printers.agent.userAgent.enums.StatusOfDocumentEnum;
+import wsd.printers.agent.common.enums.StatusOfDocumentEnum;
 import wsd.printers.agent.userAgent.exception.UnsupportedParametersPresentException;
 import wsd.printers.agent.userAgent.gui.DocumentManagePresentation;
 import wsd.printers.agent.userAgent.model.AgentConfModel;

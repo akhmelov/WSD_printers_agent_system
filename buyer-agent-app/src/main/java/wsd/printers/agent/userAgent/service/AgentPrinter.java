@@ -1,6 +1,6 @@
 package wsd.printers.agent.userAgent.service;
 
-import wsd.printers.agent.userAgent.enums.StatusOfDocumentEnum;
+import wsd.printers.agent.common.enums.StatusOfDocumentEnum;
 import wsd.printers.agent.userAgent.exception.UnsupportedParametersPresentException;
 import wsd.printers.agent.userAgent.model.AgentConfModel;
 import wsd.printers.agent.userAgent.model.DocumentModel;

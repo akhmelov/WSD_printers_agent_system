@@ -1,6 +1,6 @@
 package wsd.printers.agent.userAgent.model;
 
-import wsd.printers.agent.userAgent.enums.PaperFormatEnum;
+import wsd.printers.agent.common.enums.PaperFormatEnum;
 
 /**
  * Created by akhmelov on 11/1/16.

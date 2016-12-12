@@ -9,8 +9,8 @@ import javafx.scene.control.ListView;
 import javafx.stage.FileChooser;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import wsd.printers.agent.userAgent.enums.PaperFormatEnum;
-import wsd.printers.agent.userAgent.enums.PrinterTypeEnum;
+import wsd.printers.agent.common.enums.PaperFormatEnum;
+import wsd.printers.agent.common.enums.PrinterTypeEnum;
 import wsd.printers.agent.userAgent.exception.UnsupportedParametersPresentException;
 import wsd.printers.agent.userAgent.service.DocumentManageService;
 

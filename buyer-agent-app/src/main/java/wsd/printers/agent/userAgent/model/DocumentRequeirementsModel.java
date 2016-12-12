@@ -1,7 +1,7 @@
 package wsd.printers.agent.userAgent.model;
 
-import wsd.printers.agent.userAgent.enums.PaperFormatEnum;
-import wsd.printers.agent.userAgent.enums.PrinterTypeEnum;
+import wsd.printers.agent.common.enums.PaperFormatEnum;
+import wsd.printers.agent.common.enums.PrinterTypeEnum;
 
 import java.time.Duration;
 
