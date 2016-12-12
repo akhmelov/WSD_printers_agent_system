@@ -1,10 +1,11 @@
 package pl.edu.pw.eiti.wsd.printerweb.printer.driver;
 
-import pl.edu.pw.eiti.wsd.printerweb.Document;
+import jade.domain.FIPAAgentManagement.FailureException;
+import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
 
 public interface PrinterDriver {
 
-    abstract String addToQueue(Document document);
+    abstract String addToQueue(Document document) throws FailureException;
 
     abstract PrinterInfo getInfo();
 
@@ -27,6 +28,14 @@ public interface PrinterDriver {
     }
 
     public interface PrinterInfo {
-
+        public enum PrinterType {
+            None, Laser, Matrix, Inkjet, Lazer
+        }
     }
+
+    abstract void setNoInk(boolean b);
+
+    abstract void setNoPaper(boolean b);
+
+    abstract void setCrashed(boolean b);
 }

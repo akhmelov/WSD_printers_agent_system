@@ -7,6 +7,8 @@ import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
+import jade.proto.AchieveREResponder;
 import jade.proto.ContractNetResponder;
 import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriverImpl;
 
@@ -20,14 +22,19 @@ public class PrinterAgent extends Agent {
 
     @Override
     protected void setup() {
+        addBehaviour(createContractNetServer());
+        addBehaviour(createPrintRequestServer());
+    }
+
+    private ContractNetResponder createContractNetServer() {
         MessageTemplate mt = ContractNetResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-        addBehaviour(new ContractNetResponder(this, mt) {
+        return new ContractNetResponder(this, mt) {
 
             private static final long serialVersionUID = -5089076528343302500L;
-            
+
             private final NegotiatorRole negotiator = new NegotiatorRoleImpl();
-            
-            private final ExecutorRole executor = new ExecutorRoleImpl(new PrinterDriverImpl());
+
+            private final ExecutorRole executor = new ExecutorRoleImpl(PrinterAgent.this, new PrinterDriverImpl());
 
             @Override
             protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
@@ -37,14 +44,51 @@ public class PrinterAgent extends Agent {
             @Override
             protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept)
                     throws FailureException {
-                return executor.handleAcceptProposal(cfp);
+                return executor.handleAcceptProposal(accept);
             }
-        });
+
+            @Override
+            protected void handleOutOfSequence(ACLMessage cfp, ACLMessage propose, ACLMessage msg) {
+                // TODO Auto-generated method stub
+                super.handleOutOfSequence(cfp, propose, msg);
+            }
+
+            @Override
+            protected void handleOutOfSequence(ACLMessage msg) {
+                // TODO Auto-generated method stub
+                super.handleOutOfSequence(msg);
+            }
+            
+            
+        };
     }
 
-    @Override
-    protected void takeDown() {
-        // TODO Auto-generated method stub
-        super.takeDown();
+    private AchieveREResponder createPrintRequestServer() {
+        MessageTemplate mt = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST);
+
+        return new AchieveREResponder(this, mt) {
+
+            private final PrinterManagerRole manager = new PrinterManagerRoleImpl(myAgent);
+
+            private static final long serialVersionUID = 2095424768575958579L;
+
+            @Override
+            protected ACLMessage handleRequest(ACLMessage request) throws NotUnderstoodException, RefuseException {
+                System.out.println("print request received");
+                try {
+                    return manager.handlePrintRequest(request);
+                } catch (UnreadableException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+    }
+
+    public void errorOccured() {
+        System.out.println("PrinterAgent: error occured!");
+    }
+
+    public void readyToWork() {
+        System.out.println("PrinterAgent: ready to work!");
     }
 }
