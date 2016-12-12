@@ -12,18 +12,22 @@ public class SellerAgentMain extends Agent {
 
     private static final jade.util.Logger loggerJade = jade.util.Logger.getMyLogger(SellerAgentMain.class.getName());
 
+    private static SellerAgentMain instance;
+
     @Override
-    public void setup(){;
+    public void setup(){
+        if(instance != null)
+            throw new IllegalStateException("Agent already exist!!!!!");
+        instance = this;
         loggerJade.info("Seller-agent " + getAID().getName() + " ran.");
-        addBehaviour(new OverbearingBehaviour());
     }
 
-    public class OverbearingBehaviour extends CyclicBehaviour {
-        public void action() {
-            ACLMessage msg = myAgent.receive();
-            if(msg == null)
-                block();
-            loggerJade.info("Event cames to as");
-        }
+    @Override
+    protected void takeDown(){
+
+    }
+
+    public static SellerAgentMain getInstance(){
+        return instance;
     }
 }

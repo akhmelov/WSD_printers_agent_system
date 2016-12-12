@@ -30,10 +30,10 @@ public class Main extends Application {
 
         Platform.setImplicitExit(true);
 
+        Boot.main(new String[]{"src/main/resources/jade-agent-container.properties"});
+
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         ScreensConfig screens = context.getBean(ScreensConfig.class);
-
-        Boot.main(new String[]{"src/main/resources/jade-agent-container.properties"});
 
         screens.setPrimaryStage(stage);
         screens.showMainScreen();

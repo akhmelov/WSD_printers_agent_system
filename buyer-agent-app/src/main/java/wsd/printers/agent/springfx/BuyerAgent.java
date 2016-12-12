@@ -9,7 +9,7 @@ public class BuyerAgent extends Agent {
 
     private static final jade.util.Logger loggerJade = jade.util.Logger.getMyLogger(BuyerAgent.class.getName());
 
-    private static Agent instance;
+    private static BuyerAgent instance;
 
     @Override
     protected void setup(){
@@ -24,7 +24,7 @@ public class BuyerAgent extends Agent {
 
     }
 
-    public static Agent getInstance(){
+    public static BuyerAgent getInstance(){
         return instance;
     }
 }
