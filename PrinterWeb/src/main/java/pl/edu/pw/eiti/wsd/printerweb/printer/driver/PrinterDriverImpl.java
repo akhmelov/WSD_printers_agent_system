@@ -18,13 +18,16 @@ public class PrinterDriverImpl implements PrinterDriver, Runnable {
 
     private final AtomicInteger idGenerator = new AtomicInteger(1);
 
+    private final PrinterInfo printerInfo;
+
     private PrinterListener listener;
 
     private ExecutorService executor;
 
     private Future<?> workingFuture;
 
-    public PrinterDriverImpl() {
+    public PrinterDriverImpl(PrinterInfo printerInfo) {
+        this.printerInfo = printerInfo;
         PrinterController view = new PrinterController(this);
         view.show();
         this.executor = Executors.newSingleThreadExecutor();
@@ -93,6 +96,11 @@ public class PrinterDriverImpl implements PrinterDriver, Runnable {
 
     private void startExecution() {
         workingFuture = executor.submit(this);
+    }
+
+    @Override
+    public String toString() {
+        return printerInfo.getName();
     }
 
     private static final class PrinterEventImpl implements PrinterEvent {

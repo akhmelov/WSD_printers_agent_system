@@ -35,29 +35,11 @@ public class PrinterController extends Application {
     }
 
     public void show() {
-        Platform.runLater(new Runnable() {
-
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void run() {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("printer_view.fxml"));
-                Stage stage = new Stage(StageStyle.DECORATED);
-                loader.setController(PrinterController.this);
-                try {
-                    stage.setScene(new Scene((Pane) loader.load()));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                stage.setTitle(PrinterController.this.printer.toString());
-                stage.show();
-            }
-        });
+        Platform.runLater(new GuiInitiator(this, printer.toString()));
     }
 
     @Override
     public void start(Stage stage) throws IOException {
-
     }
 
     @FXML
@@ -93,6 +75,33 @@ public class PrinterController extends Application {
         } else {
             printer.setNoInk(false);
             noInkButton.setEffect(null);
+        }
+    }
+
+    private static final class GuiInitiator implements Runnable {
+
+        private final PrinterController printerController;
+
+        private final String name;
+
+        public GuiInitiator(PrinterController printerController, String name) {
+            this.printerController = printerController;
+            this.name = name;
+        }
+
+        @Override
+        public void run() {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("printer_view.fxml"));
+            Stage stage = new Stage(StageStyle.DECORATED);
+            loader.setController(printerController);
+            try {
+                stage.setScene(new Scene((Pane) loader.load()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            stage.setTitle(name);
+            stage.show();
         }
     }
 }

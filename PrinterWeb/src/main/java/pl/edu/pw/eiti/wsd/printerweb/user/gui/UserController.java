@@ -45,23 +45,7 @@ public class UserController extends Application {
     }
 
     public void show() {
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("user_view.fxml"));
-                Stage stage = new Stage(StageStyle.DECORATED);
-                loader.setController(UserController.this);
-                try {
-                    stage.setScene(new Scene((Pane) loader.load()));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                stage.setTitle("FXML Welcome");
-                stage.show();
-            }
-        });
+        Platform.runLater(new GuiInitiator(this, userAgent));
     }
 
     @Override
@@ -89,6 +73,33 @@ public class UserController extends Application {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    private static final class GuiInitiator implements Runnable {
+
+        private UserController userController;
+
+        private UserAgent userAgent;
+
+        public GuiInitiator(UserController userController, UserAgent userAgent) {
+            this.userController = userController;
+            this.userAgent = userAgent;
+        }
+
+        @Override
+        public void run() {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("user_view.fxml"));
+            Stage stage = new Stage(StageStyle.DECORATED);
+            loader.setController(userController);
+            try {
+                stage.setScene(new Scene((Pane) loader.load()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            stage.setTitle(userAgent.getName());
+            stage.show();
         }
     }
 

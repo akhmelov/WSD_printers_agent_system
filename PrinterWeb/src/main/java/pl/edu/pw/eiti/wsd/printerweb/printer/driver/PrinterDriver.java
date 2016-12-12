@@ -31,6 +31,8 @@ public interface PrinterDriver {
         public enum PrinterType {
             None, Laser, Matrix, Inkjet, Lazer
         }
+
+        String getName();
     }
 
     abstract void setNoInk(boolean b);

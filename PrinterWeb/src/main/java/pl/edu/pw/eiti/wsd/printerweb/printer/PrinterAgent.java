@@ -10,6 +10,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
 import jade.proto.ContractNetResponder;
+import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver.PrinterInfo;
 import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriverImpl;
 
 /**
@@ -34,7 +35,7 @@ public class PrinterAgent extends Agent {
 
             private final NegotiatorRole negotiator = new NegotiatorRoleImpl();
 
-            private final ExecutorRole executor = new ExecutorRoleImpl(PrinterAgent.this, new PrinterDriverImpl());
+            private final ExecutorRole executor = new ExecutorRoleImpl(PrinterAgent.this, new PrinterDriverImpl(new PrinterInfoImpl()));
 
             @Override
             protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
@@ -46,20 +47,6 @@ public class PrinterAgent extends Agent {
                     throws FailureException {
                 return executor.handleAcceptProposal(accept);
             }
-
-            @Override
-            protected void handleOutOfSequence(ACLMessage cfp, ACLMessage propose, ACLMessage msg) {
-                // TODO Auto-generated method stub
-                super.handleOutOfSequence(cfp, propose, msg);
-            }
-
-            @Override
-            protected void handleOutOfSequence(ACLMessage msg) {
-                // TODO Auto-generated method stub
-                super.handleOutOfSequence(msg);
-            }
-            
-            
         };
     }
 
@@ -90,5 +77,14 @@ public class PrinterAgent extends Agent {
 
     public void readyToWork() {
         System.out.println("PrinterAgent: ready to work!");
+    }
+    
+    private static class PrinterInfoImpl implements PrinterInfo {
+
+        @Override
+        public String getName() {
+            return "name";
+        }
+        
     }
 }

@@ -65,36 +65,6 @@ public class PrinterManagerRoleImpl implements PrinterManagerRole {
                 throw new RuntimeException(e);
             }
         }
-        
-        @Override
-        protected void handle(RunnableChangedEvent rce) {
-            // TODO Auto-generated method stub
-            super.handle(rce);
-        }
-
-        @Override
-        protected void handleAllResultNotifications(Vector resultNotifications) {
-            // TODO Auto-generated method stub
-            super.handleAllResultNotifications(resultNotifications);
-        }
-
-        @Override
-        public int onEnd() {
-            // TODO Auto-generated method stub
-            return super.onEnd();
-        }
-
-        @Override
-        protected void handleFailure(ACLMessage failure) {
-            // TODO Auto-generated method stub
-            super.handleFailure(failure);
-        }
-
-        @Override
-        protected void handleOutOfSequence(ACLMessage msg) {
-            // TODO Auto-generated method stub
-            super.handleOutOfSequence(msg);
-        }
 
         @Override
         protected void handleRefuse(ACLMessage refuse) {
