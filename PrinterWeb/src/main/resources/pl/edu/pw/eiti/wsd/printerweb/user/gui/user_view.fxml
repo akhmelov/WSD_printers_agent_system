@@ -1,55 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?scenebuilder-preview-i18n-resource ../../../../lang_en.properties?>
 <?scenebuilder-stylesheet ../../../../main.css?>
 
-<StackPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="394.0"
-	prefWidth="594.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="394.0" prefWidth="594.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<HBox prefHeight="100.0" prefWidth="200.0">
-			<children>
-				<VBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0"
-					spacing="10.0">
-					<children>
-						<HBox prefHeight="34.0" prefWidth="494.0">
-							<children>
-								<Button mnemonicParsing="false" onAction="#onLoadDocument"
-									text="LoadDocument" />
-							</children>
-						</HBox>
-						<HBox alignment="CENTER" prefHeight="96.0" prefWidth="494.0"
-							spacing="10.0" VBox.vgrow="ALWAYS">
-							<children>
-								<ChoiceBox fx:id="typeOfPrinterChoose" prefWidth="150.0" />
-								<ChoiceBox fx:id="paperFormatChoose" prefWidth="150.0" />
-							</children>
-						</HBox>
-						<ScrollPane prefHeight="200.0" prefWidth="200.0">
-							<content>
-								<AnchorPane maxHeight="1.7976931348623157E308"
-									maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-									minWidth="-Infinity">
-									<children>
-										<ListView fx:id="returnInfoListView" maxHeight="1.7976931348623157E308"
-											maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-											minWidth="-Infinity" prefHeight="177.0" prefWidth="494.0" />
-									</children>
-								</AnchorPane>
-							</content>
-						</ScrollPane>
-					</children>
-				</VBox>
-			</children>
-		</HBox>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="80.0" prefWidth="494.0">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="80.0" prefWidth="398.0">
+                     <children>
+                        <BorderPane>
+                           <center>
+                              <VBox alignment="CENTER" prefHeight="80.0">
+                                 <children>
+                                    <BorderPane prefHeight="40.0" prefWidth="170.0">
+                                       <center>
+                                          <TextField alignment="BOTTOM_LEFT" maxWidth="-Infinity" prefWidth="160.0" promptText="Nazwa pliku" />
+                                       </center>
+                                    </BorderPane>
+                                    <BorderPane prefHeight="40.0" prefWidth="170.0">
+                                       <top>
+                              								<ChoiceBox fx:id="paperFormatChoose" prefWidth="160.0" BorderPane.alignment="CENTER" />
+                                       </top>
+                                    </BorderPane>
+                                 </children>
+                              </VBox>
+                           </center>
+                        </BorderPane>
+                        <BorderPane prefWidth="160.0">
+                           <center>
+                              <VBox alignment="CENTER">
+                                 <children>
+                                    <BorderPane prefHeight="40.0">
+                                       <center>
+                                          <TextField maxWidth="-Infinity" prefWidth="160.0" promptText="Liczba stron" />
+                                       </center>
+                                    </BorderPane>
+                                    <BorderPane prefHeight="40.0">
+                                       <top>
+                              								<ChoiceBox fx:id="typeOfPrinterChoose" prefWidth="160.0" BorderPane.alignment="CENTER" />
+                                       </top>
+                                    </BorderPane>
+                                 </children>
+                              </VBox>
+                           </center>
+                        </BorderPane>
+                     </children>
+                  </HBox>
+                  <BorderPane focusTraversable="true" prefHeight="80.0" prefWidth="158.0">
+                     <center>
+                        <ImageView accessibleRole="BUTTON" fitHeight="80.0" fitWidth="60.0" onMouseReleased="#onLoadDocument" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                           <image>
+                              <Image url="@printer-icon.png" />
+                           </image>
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </ImageView>
+                     </center>
+                  </BorderPane>
+               </children>
+            </HBox>
+            <HBox prefHeight="206.0" prefWidth="494.0">
+               <children>
+                  <SplitPane dividerPositions="0.29797979797979796" prefHeight="206.0" prefWidth="525.0">
+                    <items>
+                        <ScrollPane>
+                           <content>
+                              <ListView prefHeight="204.0" prefWidth="143.0" />
+                           </content>
+                        </ScrollPane>
+                        <ScrollPane>
+                           <content>
+                              <ListView prefHeight="204.0" prefWidth="342.0" />
+                           </content>
+                        </ScrollPane>
+                    </items>
+                  </SplitPane>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
 	</children>
 	<padding>
 		<Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />

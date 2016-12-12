@@ -16,10 +16,12 @@ import pl.edu.pw.eiti.wsd.printerweb.user.gui.UserController;
 public class UserAgent extends Agent {
 
     private static final long serialVersionUID = -3135506373065999424L;
+    
+    private UserController gui;
 
     public UserAgent() {
         super();
-        UserController gui = new UserController(this);
+        this.gui = new UserController(this);
         gui.show();
     }
 
