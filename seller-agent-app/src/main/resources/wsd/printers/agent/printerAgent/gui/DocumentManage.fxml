@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?scenebuilder-preview-i18n-resource ../../../../lang_en.properties?>
+<?scenebuilder-stylesheet ../../../../main.css?>
+
+<StackPane fx:id="root" maxHeight="-1.0" maxWidth="-1.0" prefHeight="394.0" prefWidth="594.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wsd.printers.agent.printerAgent.gui.SpecifyAgentPresentation">
+    <children>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <VBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="10.0">
+               <children>
+                  <HBox prefHeight="34.0" prefWidth="494.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#loadScenarioButtonAction" text="Load scenario" />
+                        <Button fx:id="chooseAgentButton" mnemonicParsing="false" onAction="#chooseAgentButtonAction" text="Back to choose agent" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="96.0" prefWidth="494.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseButtonAction" text="Pause" />
+                        <Button fx:id="noPaperButton" mnemonicParsing="false" onAction="#noPaperButtonAction" text="No paper" />
+                        <Button fx:id="noInkButton" mnemonicParsing="false" onAction="#noInkButtonAction" text="No ink" />
+                     </children>
+                  </HBox>
+                  <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                     <content>
+                        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
+                           <children>
+                              <ListView fx:id="returnInfoListView1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="177.0" prefWidth="494.0" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+    </children>
+    <padding>
+        <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+    </padding>
+</StackPane>
