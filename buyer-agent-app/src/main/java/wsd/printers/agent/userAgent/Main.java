@@ -12,12 +12,20 @@ import org.springframework.stereotype.Service;
 import wsd.printers.agent.userAgent.config.AppConfig;
 import wsd.printers.agent.userAgent.gui.ScreensConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class Main extends Application {
 
     private static final Logger logger = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) {
+        List<String> argsAgentStrList = new ArrayList<>();
+
+        argsAgentStrList.add("src/main/resources/jade-agent-container.properties");
+
+        Boot.main(argsAgentStrList.toArray(new String[0]));
         launch(args);
     }
 
@@ -26,8 +34,6 @@ public class Main extends Application {
         logger.info("Starting application");
 
         Platform.setImplicitExit(true);
-
-        Boot.main(new String[]{"src/main/resources/jade-agent-container.properties"});
 
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         ScreensConfig screens = context.getBean(ScreensConfig.class);
