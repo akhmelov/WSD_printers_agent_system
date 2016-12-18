@@ -1,5 +1,8 @@
 package pl.edu.pw.eiti.wsd.printerweb;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jade.Boot;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -11,9 +14,16 @@ public class PrinterWebApplication {
     public static void main(String[] args) {
         new Thread(() -> MainApp.main(null)).start();
 
-        String[] jadeArgs = new String[] { "-gui", "userAgent:" + UserAgent.class.getName() + ";printManager:"
-                + PrinterAgent.class.getName() + ";negotiator:" + PrinterAgent.class.getName() };
-        Boot.main(jadeArgs);
+        List<String> jadeArgs = new ArrayList<>(7);
+        jadeArgs.add("-gui");
+        
+        String agents = "userAgent:" + UserAgent.class.getName(); 
+        for(int i = 0; i < 5; ++i) {
+            agents += ";negotiator" + i + ":" + PrinterAgent.class.getName();
+        }
+        jadeArgs.add(agents);
+        
+        Boot.main(jadeArgs.toArray(new String[jadeArgs.size()]));
     }
 
     public static class MainApp extends Application {
