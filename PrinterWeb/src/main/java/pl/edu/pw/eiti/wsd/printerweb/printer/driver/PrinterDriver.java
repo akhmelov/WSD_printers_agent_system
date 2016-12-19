@@ -1,5 +1,7 @@
 package pl.edu.pw.eiti.wsd.printerweb.printer.driver;
 
+import java.io.Serializable;
+
 import jade.domain.FIPAAgentManagement.FailureException;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
 
@@ -23,14 +25,30 @@ public interface PrinterDriver {
         abstract String getValue();
 
         public static enum Type {
-            PRINTED, NO_PAPER, NO_INK, CRASHED, READY;
+            PRINTED, PRINTING, NO_PAPER, NO_INK, CRASHED, READY;
         }
     }
 
-    public interface PrinterInfo {
+    public interface PrinterInfo extends Serializable {
+
         public enum PrinterType {
-            None, Laser, Matrix, Inkjet, Lazer
+            COLOR("Kolorowy"), BLACK("Czarno-biały");
+
+            private final String displayString;
+
+            PrinterType(String displayString) {
+                this.displayString = displayString;
+            }
+
+            @Override
+            public String toString() {
+                return displayString;
+            }
         }
+
+        PrinterType getPrinterType();
+
+        int getPrinterEfficiency();
 
         String getName();
     }

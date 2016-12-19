@@ -2,7 +2,9 @@ package pl.edu.pw.eiti.wsd.printerweb.user.gui;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,7 +147,7 @@ public class UserController extends Application {
             return;
         }
 
-        Document document = new DocumentImpl(paperFormatChoose.getValue(), choosenFile);
+        Document document = new DocumentImpl(typeOfPrinterChoose.getValue(), paperFormatChoose.getValue(), choosenFile);
         String docId = userAgent.printDocument(document);
         DocumentInfo docInfo = new DocumentInfo(docId, document);
 
@@ -218,7 +220,12 @@ public class UserController extends Application {
 
         private File file;
 
-        public DocumentImpl(PaperFormat format, File file) {
+        private PrinterType printerType;
+
+        private int pages = (int) (System.currentTimeMillis() % 16 + 8);
+
+        public DocumentImpl(PrinterType printerType, PaperFormat format, File file) {
+            this.printerType = printerType;
             this.format = format;
             this.file = file;
         }
@@ -235,7 +242,12 @@ public class UserController extends Application {
 
         @Override
         public int getNumberOfPages() {
-            return 50;
+            return pages;
+        }
+
+        @Override
+        public PrinterType getPrinterType() {
+            return printerType;
         }
     }
 
@@ -248,6 +260,8 @@ public class UserController extends Application {
         private StringProperty statusProperty;
 
         private ObservableList<String> details;
+        
+        private final SimpleDateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss");
 
         public DocumentInfo(String docId, Document document) {
             this.docId = docId;
@@ -290,7 +304,7 @@ public class UserController extends Application {
         }
 
         public void addDetail(String detail) {
-            detailsProperty().add(detail);
+            detailsProperty().add(dateFormatter.format(new Date()) + ": " + detail);
         }
 
         public ObservableList<String> detailsProperty() {

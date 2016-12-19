@@ -28,8 +28,8 @@ public class PrinterDriverImpl implements PrinterDriver, Runnable {
 
     public PrinterDriverImpl(PrinterInfo printerInfo) {
         this.printerInfo = printerInfo;
-        PrinterController view = new PrinterController(this);
-        view.show();
+//        PrinterController view = new PrinterController(this);
+//        view.show();
         this.executor = Executors.newSingleThreadExecutor();
         startExecution();
     }
@@ -46,8 +46,7 @@ public class PrinterDriverImpl implements PrinterDriver, Runnable {
 
     @Override
     public PrinterInfo getInfo() {
-        // TODO Auto-generated method stub
-        return null;
+        return printerInfo;
     }
 
     @Override
@@ -155,10 +154,11 @@ public class PrinterDriverImpl implements PrinterDriver, Runnable {
         try {
             while (true) {
                 DocumentTask documentTask = queue.take();
+                listener.listen(new PrinterEventImpl(Type.PRINTING, documentTask.getId()));
                 int pages = documentTask.getDoc().getNumberOfPages();
                 for (int i = 0; i < pages; i++) {
-                    Thread.sleep(100);
                     System.out.println("Page: " + i);
+                    Thread.sleep(getInfo().getPrinterEfficiency());
                 }
                 listener.listen(new PrinterEventImpl(Type.PRINTED, documentTask.getId()));
             }

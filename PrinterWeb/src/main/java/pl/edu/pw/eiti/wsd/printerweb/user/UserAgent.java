@@ -1,7 +1,6 @@
 package pl.edu.pw.eiti.wsd.printerweb.user;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -95,23 +94,25 @@ public class UserAgent extends Agent {
         public SchedulePrintingBehaviour(UserAgent myUserAgent, UserController gui, PrintersMap map,
                 LocationProvider locationProvider, String docId, Document document) {
             super(myUserAgent);
-            
+
             DocumentWrapper documentWrapper = new DocumentWrapper(docId, document);
 
             registerDefaultTransition(State.CHECK_PRINTER_MANAGER, State.INFORM_FAILED);
             registerTransition(State.CHECK_PRINTER_MANAGER, State.REQUEST_PRINT_DOCUMENT, Event.PRINTER_MANAGER_SELECTED);
             registerTransition(State.CHECK_PRINTER_MANAGER, State.SELECT_PRINTER_MANAGER, Event.PRINTER_MANAGER_NOT_SELECTED);
-            registerDefaultTransition(State.SELECT_PRINTER_MANAGER, State.CHECK_PRINTER_MANAGER);
+            registerDefaultTransition(State.SELECT_PRINTER_MANAGER, State.INFORM_FAILED);
+            registerTransition(State.SELECT_PRINTER_MANAGER, State.CHECK_PRINTER_MANAGER, Event.PRINTER_MANAGER_SELECTED);
             registerDefaultTransition(State.REQUEST_PRINT_DOCUMENT, State.INFORM_FAILED);
             registerTransition(State.REQUEST_PRINT_DOCUMENT, State.WAIT_FOR_DOC_STATUS_CHANGES,
                     Event.PRINTER_MANAGER_ACCEPTED_DOCUMENT);
             registerDefaultTransition(State.WAIT_FOR_DOC_STATUS_CHANGES, State.INFORM_FAILED);
             registerTransition(State.WAIT_FOR_DOC_STATUS_CHANGES, State.INFORM_SUCCEED, Event.SUCCEED);
 
-            registerFirstState(new CheckPrinterManagerBehaviour(myUserAgent), State.CHECK_PRINTER_MANAGER);
+            registerFirstState(new CheckPrinterManagerBehaviour(myUserAgent, gui), State.CHECK_PRINTER_MANAGER);
             registerState(new RequestDocumentPrintBehaviour(myUserAgent, gui, documentWrapper), State.REQUEST_PRINT_DOCUMENT);
             registerState(new SelectPrinterManagerBehaviour(myUserAgent, map, locationProvider), State.SELECT_PRINTER_MANAGER);
-            registerState(new WaitForDocStatusChangesBehaviour(myUserAgent, gui, documentWrapper), State.WAIT_FOR_DOC_STATUS_CHANGES);
+            registerState(new WaitForDocStatusChangesBehaviour(myUserAgent, gui, documentWrapper),
+                    State.WAIT_FOR_DOC_STATUS_CHANGES);
             registerLastState(new InformFailedBehaviour(myUserAgent, gui, documentWrapper), State.INFORM_FAILED);
             registerLastState(new InformSucceedBehaviour(myUserAgent, gui, documentWrapper), State.INFORM_SUCCEED);
         }
@@ -150,20 +151,26 @@ public class UserAgent extends Agent {
 
             private static final long serialVersionUID = 3785542403885865676L;
 
-            private UserAgent myUserAgent;
+            private final UserAgent myUserAgent;
+
+            private final UserController gui;
 
             private int exitStatus = Event.FAILED;
 
-            public CheckPrinterManagerBehaviour(UserAgent myAgent) {
+            public CheckPrinterManagerBehaviour(UserAgent myAgent, UserController gui) {
                 super(myAgent);
                 this.myUserAgent = myAgent;
+                this.gui = gui;
             }
 
             @Override
             public void action() {
                 if (myUserAgent.getPrinterManager() != null) {
+                    gui.addStatusInfo("Połączony z " + myUserAgent.getPrinterManager().getName()); // TODO do not hardcode display
+                                                                                                   // strings
                     exitStatus = Event.PRINTER_MANAGER_SELECTED;
                 } else {
+                    gui.addStatusInfo("Rozłączony");
                     exitStatus = Event.PRINTER_MANAGER_NOT_SELECTED;
                 }
             }
@@ -183,11 +190,10 @@ public class UserAgent extends Agent {
             private final UserAgent myUserAgent;
 
             private final UserController gui;
-            
+
             private final DocumentWrapper documentWrapper;
 
             private int exitStatus = Event.FAILED;
-
 
             public RequestDocumentPrintBehaviour(UserAgent myUserAgent, UserController gui, DocumentWrapper documentWrapper) {
                 super(myUserAgent, new ACLMessage(ACLMessage.REQUEST));
@@ -200,8 +206,6 @@ public class UserAgent extends Agent {
             @Override
             protected Vector prepareRequests(ACLMessage request) {
                 try {
-                    System.out.println("UserAgent: 1.1 Print Request");
-
                     request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
                     request.setContentObject(documentWrapper.getDocument());
                     request.addReceiver(myUserAgent.getPrinterManager());
@@ -218,8 +222,6 @@ public class UserAgent extends Agent {
             @SuppressWarnings("unchecked") // it is known that Vector contains ACLMessage, just old Java implementation
             @Override
             protected void handleAllResponses(@SuppressWarnings("rawtypes") Vector responses) {
-                System.out.println("UserAgent: handle all responses");
-
                 ACLMessage agreement = null;
                 if (!responses.isEmpty()) {
                     for (ACLMessage response : (Vector<ACLMessage>) responses) { // in fact there is one response
@@ -233,7 +235,7 @@ public class UserAgent extends Agent {
                 if (agreement != null) {
                     gui.addDocumentStatusInfo(documentWrapper.getId(), DocumentStatus.WAITS_IN_MANAGER_QUEUE,
                             "Dodano do kolejki managera: " + agreement.getSender().getName());
-                    
+
                     documentWrapper.setConversationPartner(agreement.getSender());
                     documentWrapper.setConversationId(agreement.getConversationId());
                     exitStatus = Event.PRINTER_MANAGER_ACCEPTED_DOCUMENT;
@@ -254,12 +256,10 @@ public class UserAgent extends Agent {
             private static final long serialVersionUID = 4673059172599989088L;
 
             private final UserAgent userAgent;
-            
+
             private final UserController gui;
 
             private final DocumentWrapper documentWrapper;
-            
-            private final MessageTemplate mt;
 
             private int exitStatus = Event.PRINTER_MANAGER_ACCEPTED_DOCUMENT;
 
@@ -268,39 +268,47 @@ public class UserAgent extends Agent {
                 this.userAgent = userAgent;
                 this.gui = gui;
                 this.documentWrapper = documentWrapper;
-                
-                MessageTemplate matchConversation = MessageTemplate.MatchConversationId(documentWrapper.getConversationId());
-                this.mt = MessageTemplate.and(matchConversation, MessageTemplate.MatchSender(documentWrapper.getConversationPartner()));
+
             }
-            
+
             @Override
             public void action() {
+                MessageTemplate matchConversation = MessageTemplate.MatchConversationId(documentWrapper.getConversationId());
+                MessageTemplate mt = MessageTemplate.and(matchConversation,
+                        MessageTemplate.MatchSender(documentWrapper.getConversationPartner()));
+
                 ACLMessage msg = userAgent.receive(mt);
-                if(msg != null) {
-                    if(msg.getPerformative() == ACLMessage.INFORM) {
-                        DocumentStatus status = DocumentStatus.valueOf(msg.getContent());
-                        switch(status) {
+                if (msg != null) {
+                    String content = msg.getContent();
+                    String[] contents = content.split(";");
+                    
+                    if (msg.getPerformative() == ACLMessage.INFORM) {
+                        DocumentStatus status = DocumentStatus.valueOf(contents[0]);
+                        switch (status) {
                             case FAILED:
+                                documentWrapper.setStatusInfo(contents[1]);
                                 exitStatus = Event.FAILED;
                                 break;
                             case PRINTED:
+                                documentWrapper.setStatusInfo(contents[1]);
                                 exitStatus = Event.SUCCEED;
-                                //$FALL-THROUGH$
+                                break;
                             case LOADED:
                             case PRINTING:
                             case WAITS_IN_MANAGER_QUEUE:
                             case WAITS_IN_PRINTER_QUEUE:
-                                gui.addDocumentStatusInfo(documentWrapper.getId(), status, "Nowy status: " + new Date());
+                                gui.addDocumentStatusInfo(documentWrapper.getId(), status, contents[1]);
                                 break;
                             default:
                         }
                     } else {
+                        documentWrapper.setStatusInfo(contents[1]);
                         exitStatus = Event.FAILED;
                         return;
                     }
+                } else {
+                    block();
                 }
-                
-                block();
             }
 
             @Override
@@ -318,19 +326,20 @@ public class UserAgent extends Agent {
 
             private static final long serialVersionUID = -1684688589310085659L;
 
-            private UserController gui;
+            private final UserController gui;
 
-            private String docId;
+            private final DocumentWrapper documentWrapper;
 
             public InformFailedBehaviour(Agent a, UserController gui, DocumentWrapper documentWrapper) {
                 super(a);
                 this.gui = gui;
-                this.docId = documentWrapper.getId();
+                this.documentWrapper = documentWrapper;
             }
 
             @Override
             public void action() {
-                gui.addDocumentStatusInfo(docId, DocumentStatus.FAILED, "Bład drukowania!");
+                gui.addDocumentStatusInfo(documentWrapper.getId(), DocumentStatus.FAILED,
+                        "Bład drukowania: " + documentWrapper.getStatusInfo());
             }
         }
 
@@ -338,19 +347,19 @@ public class UserAgent extends Agent {
 
             private static final long serialVersionUID = -5271369978257311237L;
 
-            private UserController gui;
+            private final UserController gui;
 
-            private String docId;
+            private final DocumentWrapper documentWrapper;
 
             public InformSucceedBehaviour(Agent a, UserController gui, DocumentWrapper documentWrapper) {
                 super(a);
                 this.gui = gui;
-                this.docId = documentWrapper.getId();
+                this.documentWrapper = documentWrapper;
             }
 
             @Override
             public void action() {
-                gui.addDocumentStatusInfo(docId, DocumentStatus.FAILED, "Bład drukowania!");
+                gui.addDocumentStatusInfo(documentWrapper.getId(), DocumentStatus.PRINTED, documentWrapper.getStatusInfo());
             }
         }
 
@@ -399,7 +408,6 @@ public class UserAgent extends Agent {
                             accepted = true;
                             ACLMessage reply = offer.createReply();
                             reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-                            System.out.println("UserAgent: Accepting printer manager: " + offer.getSender().getName());
                             acceptances.add(reply);
                             myUserAgent.setPrinterManager(offer.getSender());
                         } else {
@@ -420,34 +428,36 @@ public class UserAgent extends Agent {
                 return exitStatus;
             }
         }
-        
+
         private static final class DocumentWrapper {
 
             private String id;
-            
+
             private Document document;
 
             private String conversationId;
 
             private AID conversationPartner;
 
+            private String statusInfo;
+
             public DocumentWrapper(String id, Document document) {
                 this.id = id;
                 this.document = document;
             }
-            
+
             public String getId() {
                 return id;
             }
-            
+
             public Document getDocument() {
                 return document;
             }
-            
+
             public AID getConversationPartner() {
                 return conversationPartner;
             }
-            
+
             public void setConversationPartner(AID conversationPartner) {
                 this.conversationPartner = conversationPartner;
             }
@@ -455,9 +465,17 @@ public class UserAgent extends Agent {
             public void setConversationId(String conversationId) {
                 this.conversationId = conversationId;
             }
-            
+
             public String getConversationId() {
                 return conversationId;
+            }
+
+            public String getStatusInfo() {
+                return statusInfo;
+            }
+
+            public void setStatusInfo(String info) {
+                this.statusInfo = info;
             }
         }
     }
