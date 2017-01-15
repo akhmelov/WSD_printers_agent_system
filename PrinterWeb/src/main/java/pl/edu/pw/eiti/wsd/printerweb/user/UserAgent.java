@@ -268,7 +268,6 @@ public class UserAgent extends Agent {
                 this.userAgent = userAgent;
                 this.gui = gui;
                 this.documentWrapper = documentWrapper;
-
             }
 
             @Override

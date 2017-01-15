@@ -2,7 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
@@ -22,7 +24,7 @@
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
          <children>
-            <BorderPane maxWidth="1.7976931348623157E308">
+            <BorderPane maxWidth="1.7976931348623157E308" prefHeight="103.0" prefWidth="510.0">
                <center>
                   <BorderPane maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
                      <right>
@@ -30,7 +32,7 @@
                            <center>
                   								<ChoiceBox fx:id="paperFormatChoose" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                  <BorderPane.margin>
-                                    <Insets bottom="10.0" />
+                                    <Insets />
                                  </BorderPane.margin>
                               </ChoiceBox>
                            </center>
@@ -41,7 +43,7 @@
                            <left>
                   								<ChoiceBox fx:id="typeOfPrinterChoose" maxWidth="1.7976931348623157E308" prefWidth="200.0" BorderPane.alignment="CENTER">
                                  <BorderPane.margin>
-                                    <Insets bottom="10.0" right="10.0" />
+                                    <Insets right="10.0" />
                                  </BorderPane.margin>
                               </ChoiceBox>
                            </left>
@@ -79,8 +81,33 @@
                <VBox.margin>
                   <Insets left="20.0" right="20.0" />
                </VBox.margin>
+               <bottom>
+                  <BorderPane BorderPane.alignment="CENTER">
+                     <center>
+                        <DatePicker fx:id="preferredDate" maxWidth="-Infinity" prefWidth="200.0" promptText="Preferowana data wydruku" BorderPane.alignment="CENTER">
+                           <BorderPane.margin>
+                              <Insets bottom="10.0" />
+                           </BorderPane.margin>
+                        </DatePicker>
+                     </center>
+                     <left>
+                        <TextField fx:id="numberOfCopies" maxWidth="1.7976931348623157E308" prefWidth="200.0" promptText="Liczba kopii" BorderPane.alignment="CENTER">
+                           <BorderPane.margin>
+                              <Insets bottom="10.0" />
+                           </BorderPane.margin>
+                        </TextField>
+                     </left>
+                     <right>
+                        <CheckBox fx:id="doubleSided" mnemonicParsing="false" prefHeight="17.0" prefWidth="90.0" text="Dwustronny" BorderPane.alignment="CENTER">
+                           <BorderPane.margin>
+                              <Insets bottom="10.0" />
+                           </BorderPane.margin>
+                        </CheckBox>
+                     </right>
+                  </BorderPane>
+               </bottom>
             </BorderPane>
-            <BorderPane maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <BorderPane maxWidth="1.7976931348623157E308" prefHeight="162.0" prefWidth="510.0" VBox.vgrow="ALWAYS">
                <left>
                   <TableView fx:id="scheduledDocumentsView" minWidth="50.0" prefHeight="256.0" prefWidth="199.0" style="margin-right: 10px;" BorderPane.alignment="CENTER">
                     <columns>

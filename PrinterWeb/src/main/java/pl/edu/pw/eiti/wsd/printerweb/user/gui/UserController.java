@@ -3,11 +3,13 @@ package pl.edu.pw.eiti.wsd.printerweb.user.gui;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -22,7 +24,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
@@ -30,6 +34,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
@@ -67,6 +73,15 @@ public class UserController extends Application {
 
     @FXML
     private Label userStatusLabel;
+
+    @FXML
+    private DatePicker preferredDate;
+
+    @FXML
+    private CheckBox doubleSided;
+
+    @FXML
+    private TextField numberOfCopies;
 
     private FileChooser fileChooser = new FileChooser();
 
@@ -128,6 +143,18 @@ public class UserController extends Application {
                 returnInfoListView.setItems(scheduledDocuments.get(newValue.getDocId()).detailsProperty());
             }
         });
+
+        UnaryOperator<Change> filter = change -> {
+            String text = change.getText();
+
+            if (text.matches("[0-9]*")) {
+                return change;
+            }
+
+            return null;
+        };
+        TextFormatter<String> textFormatter = new TextFormatter<>(filter);
+        numberOfCopies.setTextFormatter(textFormatter);
     }
 
     @FXML
@@ -147,7 +174,8 @@ public class UserController extends Application {
             return;
         }
 
-        Document document = new DocumentImpl(typeOfPrinterChoose.getValue(), paperFormatChoose.getValue(), choosenFile);
+        Document document = new DocumentImpl(typeOfPrinterChoose.getValue(), paperFormatChoose.getValue(), choosenFile,
+                Integer.valueOf(numberOfCopies.getText()), preferredDate.getValue(), doubleSided.isSelected());
         String docId = userAgent.printDocument(document);
         DocumentInfo docInfo = new DocumentInfo(docId, document);
 
@@ -216,18 +244,28 @@ public class UserController extends Application {
 
         private static final long serialVersionUID = 8066440564891031262L;
 
-        private PaperFormat format;
+        private final PaperFormat format;
 
-        private File file;
+        private final File file;
 
-        private PrinterType printerType;
+        private final PrinterType printerType;
 
-        private int pages = (int) (System.currentTimeMillis() % 16 + 8);
+        private final int pages = (int) (System.currentTimeMillis() % 16 + 8);
 
-        public DocumentImpl(PrinterType printerType, PaperFormat format, File file) {
+        private final int numberOfCopies;
+
+        private final LocalDate preferredDate;
+
+        private final boolean doubleSided;
+
+        public DocumentImpl(PrinterType printerType, PaperFormat format, File file, int numberOfCopies, LocalDate preferredDate,
+                boolean doubleSided) {
             this.printerType = printerType;
             this.format = format;
             this.file = file;
+            this.numberOfCopies = numberOfCopies;
+            this.preferredDate = preferredDate;
+            this.doubleSided = doubleSided;
         }
 
         @Override
@@ -249,6 +287,21 @@ public class UserController extends Application {
         public PrinterType getPrinterType() {
             return printerType;
         }
+
+        @Override
+        public int getNumberOfCopies() {
+            return numberOfCopies;
+        }
+
+        @Override
+        public LocalDate getPreferredDate() {
+            return preferredDate;
+        }
+
+        @Override
+        public boolean isDoubleSided() {
+            return doubleSided;
+        }
     }
 
     private static class DocumentInfo {
@@ -260,7 +313,7 @@ public class UserController extends Application {
         private StringProperty statusProperty;
 
         private ObservableList<String> details;
-        
+
         private final SimpleDateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss");
 
         public DocumentInfo(String docId, Document document) {
