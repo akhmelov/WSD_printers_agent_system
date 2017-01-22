@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import jade.domain.FIPAAgentManagement.FailureException;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
 import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver.PrinterEvent.Type;
+import pl.edu.pw.eiti.wsd.printerweb.printer.gui.GuiInfo;
+import pl.edu.pw.eiti.wsd.printerweb.printer.gui.PrinterController;
 
 public class PrinterDriverImpl implements PrinterDriver, Runnable {
 
@@ -25,10 +27,12 @@ public class PrinterDriverImpl implements PrinterDriver, Runnable {
 
     private Future<?> workingFuture;
 
+    private GuiInfo guiInfo;
+
     public PrinterDriverImpl(PrinterInfo printerInfo) {
         this.printerInfo = printerInfo;
-        // PrinterController view = new PrinterController(this);
-        // view.show();
+        PrinterController view = new PrinterController(this);
+        view.show();
         this.executor = Executors.newSingleThreadExecutor();
         startExecution();
     }
@@ -148,18 +152,24 @@ public class PrinterDriverImpl implements PrinterDriver, Runnable {
         }
     }
 
+    public void setGuiInfoStatusListener(GuiInfo guiInfoStatus){
+        guiInfo = guiInfoStatus;
+    }
+
     @Override
     public void run() {
         try {
             while (true) {
                 DocumentTask documentTask = queue.take();
                 listener.listen(new PrinterEventImpl(Type.PRINTING, documentTask.getId()));
+                guiInfo.addStatus("Printing document: " + documentTask.getId());
                 int pages = documentTask.getDoc().getNumberOfPages();
                 for (int i = 0; i < pages; i++) {
                     System.out.println("Page: " + i);
                     Thread.sleep(getInfo().getPrinterBlackEfficiency());
                 }
                 listener.listen(new PrinterEventImpl(Type.PRINTED, documentTask.getId()));
+                guiInfo.addStatus("Printed document: " + documentTask.getId());
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

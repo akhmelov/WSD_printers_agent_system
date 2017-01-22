@@ -16,9 +16,9 @@ public class PrinterWebApplication {
 
         List<String> jadeArgs = new ArrayList<>(7);
         jadeArgs.add("-gui");
-        
-        String agents = "userAgent:" + UserAgent.class.getName(); 
-        for(int i = 0; i < 5; ++i) {
+
+            String agents = "userAgent:" + UserAgent.class.getName();
+            for(int i = 0; i < 2; ++i) {
             agents += ";negotiator" + i + ":" + PrinterAgent.class.getName();
         }
         jadeArgs.add(agents);
