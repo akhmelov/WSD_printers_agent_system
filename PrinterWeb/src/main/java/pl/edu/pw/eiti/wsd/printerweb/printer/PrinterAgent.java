@@ -291,7 +291,7 @@ public class PrinterAgent extends Agent implements PrinterListener {
                         reply.setContentObject(documentWrapper.getDocument());
                         acceptances.add(reply);
                     } else {
-                        documentWrapper.setStatusInfo("Nie można wybrac oferty!");
+                        documentWrapper.setStatusInfo("Brak drukarki spełniajacej kryteria drukowania!!");
                         exitStatus = Event.FAILED;
                     }
                 } catch (IOException e) {
