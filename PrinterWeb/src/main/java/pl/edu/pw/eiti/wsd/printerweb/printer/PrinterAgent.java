@@ -26,6 +26,7 @@ import jade.proto.ContractNetResponder;
 import pl.edu.pw.eiti.wsd.printerweb.printer.PrinterSelector.PrinterOffer;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.DocumentStatus;
+import pl.edu.pw.eiti.wsd.printerweb.printer.document.PaperFormat;
 import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver;
 import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver.PrinterEvent;
 import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver.PrinterInfo;
@@ -491,8 +492,56 @@ public class PrinterAgent extends Agent implements PrinterListener {
         }
 
         @Override
-        public int getPrinterEfficiency() {
+        public int getPrinterColorEfficiency() {
             return (int) (System.currentTimeMillis() % 200) * 8;
+        }
+
+        @Override
+        public int getPrinterBlackEfficiency() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getResolution() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public Set<PaperFormat> getSupportedPaperFormats() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public boolean isDoubleSidedSupported() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public int paperContainerCapacity() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int paperContainerActualCapacity() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public boolean isColorSupported() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public int currentQueueLength() {
+            // TODO Auto-generated method stub
+            return 0;
         }
     }
 

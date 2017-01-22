@@ -158,7 +158,7 @@ public class PrinterDriverImpl implements PrinterDriver, Runnable {
                 int pages = documentTask.getDoc().getNumberOfPages();
                 for (int i = 0; i < pages; i++) {
                     System.out.println("Page: " + i);
-                    Thread.sleep(getInfo().getPrinterEfficiency());
+                    Thread.sleep(getInfo().getPrinterBlackEfficiency());
                 }
                 listener.listen(new PrinterEventImpl(Type.PRINTED, documentTask.getId()));
             }

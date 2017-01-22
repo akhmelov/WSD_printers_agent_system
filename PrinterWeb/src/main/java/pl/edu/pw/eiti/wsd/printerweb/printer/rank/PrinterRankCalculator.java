@@ -6,6 +6,6 @@ import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver.PrinterInfo;
 public class PrinterRankCalculator {
 
     public int calculateRank(Document document, PrinterInfo printerInfo) {
-        return document.getNumberOfPages() * printerInfo.getPrinterEfficiency();
+        return document.getNumberOfPages() * printerInfo.getPrinterColorEfficiency();
     }
 }

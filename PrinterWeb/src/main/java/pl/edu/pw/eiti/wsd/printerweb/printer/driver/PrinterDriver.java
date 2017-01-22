@@ -1,9 +1,11 @@
 package pl.edu.pw.eiti.wsd.printerweb.printer.driver;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import jade.domain.FIPAAgentManagement.FailureException;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
+import pl.edu.pw.eiti.wsd.printerweb.printer.document.PaperFormat;
 
 public interface PrinterDriver {
 
@@ -48,7 +50,23 @@ public interface PrinterDriver {
 
         PrinterType getPrinterType();
 
-        int getPrinterEfficiency();
+        int getPrinterColorEfficiency();
+
+        int getPrinterBlackEfficiency();
+        
+        int getResolution();
+        
+        Set<PaperFormat> getSupportedPaperFormats();
+        
+        boolean isDoubleSidedSupported();
+        
+        int paperContainerCapacity();
+        
+        int paperContainerActualCapacity();
+        
+        boolean isColorSupported();
+        
+        int currentQueueLength();
 
         String getName();
     }
