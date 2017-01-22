@@ -22,7 +22,7 @@
 
 <AnchorPane prefHeight="376.0" prefWidth="488.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+      <VBox prefHeight="356.0" prefWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
          <children>
             <BorderPane maxWidth="1.7976931348623157E308" prefHeight="103.0" prefWidth="510.0">
                <center>
@@ -83,27 +83,29 @@
                </VBox.margin>
                <bottom>
                   <BorderPane BorderPane.alignment="CENTER">
-                     <center>
-                        <DatePicker fx:id="preferredDate" maxWidth="-Infinity" prefWidth="200.0" promptText="Preferowana data wydruku" BorderPane.alignment="CENTER">
-                           <BorderPane.margin>
-                              <Insets bottom="10.0" />
-                           </BorderPane.margin>
-                        </DatePicker>
-                     </center>
-                     <left>
-                        <TextField fx:id="numberOfCopies" maxWidth="1.7976931348623157E308" prefWidth="200.0" promptText="Liczba kopii" BorderPane.alignment="CENTER">
-                           <BorderPane.margin>
-                              <Insets bottom="10.0" />
-                           </BorderPane.margin>
-                        </TextField>
-                     </left>
                      <right>
                         <CheckBox fx:id="doubleSided" mnemonicParsing="false" prefHeight="17.0" prefWidth="90.0" text="Dwustronny" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
-                              <Insets bottom="10.0" />
+                              <Insets bottom="10.0" left="10.0" />
                            </BorderPane.margin>
                         </CheckBox>
                      </right>
+                     <center>
+                        <BorderPane maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+                           <BorderPane.margin>
+                              <Insets bottom="10.0" />
+                           </BorderPane.margin>
+                           <left>
+                              <TextField fx:id="numberOfCopies" maxWidth="1.7976931348623157E308" prefWidth="140.0" promptText="Liczba kopii" BorderPane.alignment="CENTER" />
+                           </left>
+                           <center>
+                              <DatePicker fx:id="preferredDate" maxWidth="-Infinity" prefWidth="140.0" promptText="Preferowana data wydruku" BorderPane.alignment="CENTER" />
+                           </center>
+                           <right>
+                              <TextField fx:id="minResolution" prefWidth="110.0" promptText="DPI" BorderPane.alignment="CENTER" />
+                           </right>
+                        </BorderPane>
+                     </center>
                   </BorderPane>
                </bottom>
             </BorderPane>

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import jade.domain.FIPAAgentManagement.FailureException;
+import pl.edu.pw.eiti.wsd.printerweb.printer.LocationProvider.Location;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.PaperFormat;
 
@@ -60,15 +61,19 @@ public interface PrinterDriver {
         
         boolean isDoubleSidedSupported();
         
-        int paperContainerCapacity();
+        int getPaperContainerCapacity();
         
-        int paperContainerActualCapacity();
+        int getPaperContainerActualCapacity();
         
         boolean isColorSupported();
         
-        int currentQueueLength();
+        int getCurrentQueueLength();
 
         String getName();
+
+        int getRefillTime();
+
+        Location getLocation();
     }
 
     abstract void setNoInk(boolean b);

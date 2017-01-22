@@ -1,5 +1,7 @@
 package pl.edu.pw.eiti.wsd.printerweb.printer;
 
+import pl.edu.pw.eiti.wsd.printerweb.printer.LocationProvider.Location;
+
 public class LocationProvider {
 
     public Location getCurrentLocation() {
@@ -31,5 +33,10 @@ public class LocationProvider {
         public int getFloor() {
             return floor;
         }
+    }
+
+    public int calculateDistance(Location sourceLocation, Location location) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

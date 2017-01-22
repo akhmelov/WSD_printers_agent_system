@@ -1,8 +1,9 @@
 package pl.edu.pw.eiti.wsd.printerweb.printer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -23,6 +24,7 @@ import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
 import jade.proto.ContractNetInitiator;
 import jade.proto.ContractNetResponder;
+import pl.edu.pw.eiti.wsd.printerweb.printer.LocationProvider.Location;
 import pl.edu.pw.eiti.wsd.printerweb.printer.PrinterSelector.PrinterOffer;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.DocumentStatus;
@@ -32,10 +34,9 @@ import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver.PrinterEvent;
 import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver.PrinterInfo;
 import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver.PrinterListener;
 import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriverImpl;
-import pl.edu.pw.eiti.wsd.printerweb.printer.rank.PrinterRankCalculator;
 
 /**
- * Agent which is responsible for interaction with {@link pl.edu.pw.eiti.wsd.printerweb.user.PrintAgent UserAgent}. Provides access to printers.
+ * Agent which is responsible for interaction with {@link pl.edu.pw.eiti.wsd.printerweb.user.UserAgent UserAgent}. Provides access to printers.
  *
  */
 public class PrinterAgent extends Agent implements PrinterListener {
@@ -53,7 +54,7 @@ public class PrinterAgent extends Agent implements PrinterListener {
         printerDriver = new PrinterDriverImpl(new PrinterInfoImpl(getName()));
         printerDriver.addListener(this);
         addBehaviour(createManagerRequestServer());
-        addBehaviour(new PrintRequestFromUserServerBehaviour(this));
+        addBehaviour(new PrintRequestFromUserServerBehaviour(this, printerDriver));
         addBehaviour(new PrintRequestFromManagerServerBehaviour(this, printerDriver));
     }
 
@@ -122,15 +123,18 @@ public class PrinterAgent extends Agent implements PrinterListener {
 
         private final PrinterAgent printerAgent;
 
-        private final PrinterSelector selector = new PrinterSelector(new PrinterRankCalculator());
-
         private final PrintersMap map = new PrintersMap();
 
         private final LocationProvider locationProvider = new LocationProvider();
 
-        public PrintRequestFromUserServerBehaviour(PrinterAgent printerAgent) {
+        private final PrinterSelector selector = new PrinterSelector(locationProvider);
+
+        private PrinterDriver myPrinter;
+
+        public PrintRequestFromUserServerBehaviour(PrinterAgent printerAgent, PrinterDriver printerDriver) {
             super(printerAgent, AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_REQUEST));
             this.printerAgent = printerAgent;
+            this.myPrinter = printerDriver;
         }
 
         @Override
@@ -140,7 +144,8 @@ public class PrinterAgent extends Agent implements PrinterListener {
                 documentWrapper.setRequestorConversationId(request.getConversationId());
                 documentWrapper.setRequestorId(request.getSender());
 
-                myAgent.addBehaviour(new PrintDocumentBehaviour(printerAgent, map, locationProvider, selector, documentWrapper));
+                myAgent.addBehaviour(
+                        new PrintDocumentBehaviour(printerAgent, map, locationProvider, selector, documentWrapper, myPrinter));
 
                 ACLMessage reply = request.createReply();
                 reply.setPerformative(ACLMessage.AGREE);
@@ -162,7 +167,7 @@ public class PrinterAgent extends Agent implements PrinterListener {
         private static final long serialVersionUID = 4248496606864447021L;
 
         public PrintDocumentBehaviour(PrinterAgent myAgent, PrintersMap map, LocationProvider locationProvider,
-                PrinterSelector selector, DocumentWrapper documentWrapper) {
+                PrinterSelector selector, DocumentWrapper documentWrapper, PrinterDriver myPrinter) {
             super(myAgent);
 
             registerDefaultTransition(State.PRINT_ORDER, State.INFORM_FAILED);
@@ -174,7 +179,7 @@ public class PrinterAgent extends Agent implements PrinterListener {
             registerDefaultTransition(State.WAIT_FOR_STATUS, State.INFORM_FAILED);
             registerTransition(State.WAIT_FOR_STATUS, State.INFORM_SUCCEED, Event.SUCCEED);
 
-            registerFirstState(new PrintOrderBehaviour(myAgent, map, locationProvider, selector, documentWrapper),
+            registerFirstState(new PrintOrderBehaviour(myAgent, map, locationProvider, selector, documentWrapper, myPrinter),
                     State.PRINT_ORDER);
             registerState(new InformBehaviour(myAgent, documentWrapper, DocumentStatus.WAITS_IN_PRINTER_QUEUE),
                     State.WAITS_IN_PRINTER);
@@ -209,6 +214,8 @@ public class PrinterAgent extends Agent implements PrinterListener {
 
             private static final long serialVersionUID = 3564655341122972899L;
 
+            private PrinterAgent printerAgent;
+
             private final PrintersMap map;
 
             private final LocationProvider locationProvider;
@@ -219,13 +226,17 @@ public class PrinterAgent extends Agent implements PrinterListener {
 
             private int exitStatus = Event.FAILED;
 
-            public PrintOrderBehaviour(Agent myAgent, PrintersMap map, LocationProvider locationProvider,
-                    PrinterSelector selector, DocumentWrapper documentWrapper) {
+            private PrinterDriver myPrinter;
+
+            public PrintOrderBehaviour(PrinterAgent myAgent, PrintersMap map, LocationProvider locationProvider,
+                    PrinterSelector selector, DocumentWrapper documentWrapper, PrinterDriver myPrinter) {
                 super(myAgent, new ACLMessage(ACLMessage.CFP));
+                this.printerAgent = myAgent;
                 this.map = map;
                 this.locationProvider = locationProvider;
                 this.documentWrapper = documentWrapper;
                 this.selector = selector;
+                this.myPrinter = myPrinter;
             }
 
             @Override
@@ -233,7 +244,7 @@ public class PrinterAgent extends Agent implements PrinterListener {
                 Set<AID> printersNearby = map.getPrintersNearby(locationProvider.getCurrentLocation());
                 if (!printersNearby.isEmpty()) {
                     printersNearby.forEach(printer -> {
-                        if (!printer.equals(myAgent.getAID()))
+                        if (!printer.equals(printerAgent.getAID()))
                             cfp.addReceiver(printer);
                     });
                     cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
@@ -254,7 +265,7 @@ public class PrinterAgent extends Agent implements PrinterListener {
                 }
 
                 Map<AID, ACLMessage> msgBySender = new HashMap<>();
-                Set<PrinterOffer> offers = new HashSet<>();
+                List<PrinterOffer> offers = new ArrayList<>();
                 for (ACLMessage response : (Vector<ACLMessage>) responses) {
                     try {
                         offers.add(new PrinterOffer(response.getSender(), (PrinterInfo) response.getContentObject()));
@@ -265,6 +276,8 @@ public class PrinterAgent extends Agent implements PrinterListener {
                         acceptances.add(reply);
                     }
                 }
+
+                offers.add(new PrinterOffer(printerAgent.getAID(), myPrinter.getInfo()));
 
                 try {
                     AID aid = selector.selectOffer(documentWrapper.getDocument(), offers);
@@ -521,13 +534,13 @@ public class PrinterAgent extends Agent implements PrinterListener {
         }
 
         @Override
-        public int paperContainerCapacity() {
+        public int getPaperContainerCapacity() {
             // TODO Auto-generated method stub
             return 0;
         }
 
         @Override
-        public int paperContainerActualCapacity() {
+        public int getPaperContainerActualCapacity() {
             // TODO Auto-generated method stub
             return 0;
         }
@@ -539,9 +552,21 @@ public class PrinterAgent extends Agent implements PrinterListener {
         }
 
         @Override
-        public int currentQueueLength() {
+        public int getCurrentQueueLength() {
             // TODO Auto-generated method stub
             return 0;
+        }
+
+        @Override
+        public int getRefillTime() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public Location getLocation() {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 
@@ -718,47 +743,3 @@ public class PrinterAgent extends Agent implements PrinterListener {
         this.crashed = crashed;
     }
 }
-
-// TODO convert to behaviors
-// public class ExecutorRoleImpl implements ExecutorRole, PrinterListener {
-//
-// private final PrinterDriver printerDriver;
-//
-// private final Map<String, ACLMessage> scheduledTasks = new ConcurrentHashMap<>();
-//
-// private final PrinterAgent agent;
-//
-// /**
-// * @param printerDriver
-// * Printer driver which is used to communicate with the printer which is controlled by this instance. Not null.
-// */
-// public ExecutorRoleImpl(final PrinterAgent agent, final PrinterDriver printerDriver) {
-// this.agent = agent;
-// this.printerDriver = printerDriver;
-// printerDriver.addListener(this);
-// }
-//
-// @Override
-// public ACLMessage handleAcceptProposal(ACLMessage msg) {
-// System.out.println("Executor: proposal accepted, print");
-// try {
-// Document document = (Document) msg.getContentObject();
-// String id = printerDriver.addToQueue(document);
-// ACLMessage response;
-// if (id != null) {
-// scheduledTasks.put(id, msg);
-// response = createConfirmation(id, msg);
-// } else {
-// response = createRefusal(msg);
-// }
-//
-// return response;
-// } catch (UnreadableException | FailureException e) {
-// throw new RuntimeException(e); // TODO respond not understood
-// }
-// }
-//
-
-//
-
-// }

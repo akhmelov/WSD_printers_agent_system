@@ -42,6 +42,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import pl.edu.pw.eiti.wsd.printerweb.printer.LocationProvider.Location;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.DocumentStatus;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.PaperFormat;
@@ -56,6 +57,9 @@ public class UserController extends Application {
     @FXML
     private ChoiceBox<PaperFormat> paperFormatChoose;
 
+    @FXML
+    private TextField minResolution;
+    
     @FXML
     private ListView<String> returnInfoListView;
 
@@ -153,8 +157,8 @@ public class UserController extends Application {
 
             return null;
         };
-        TextFormatter<String> textFormatter = new TextFormatter<>(filter);
-        numberOfCopies.setTextFormatter(textFormatter);
+        numberOfCopies.setTextFormatter(new TextFormatter<>(filter));
+        minResolution.setTextFormatter(new TextFormatter<>(filter));
     }
 
     @FXML
@@ -175,7 +179,7 @@ public class UserController extends Application {
         }
 
         Document document = new DocumentImpl(typeOfPrinterChoose.getValue(), paperFormatChoose.getValue(), choosenFile,
-                Integer.valueOf(numberOfCopies.getText()), preferredDate.getValue(), doubleSided.isSelected());
+                Integer.valueOf(numberOfCopies.getText()), preferredDate.getValue(), doubleSided.isSelected(), Integer.valueOf(minResolution.getText()), userAgent.getCurrentLocation());
         String docId = userAgent.printDocument(document);
         DocumentInfo docInfo = new DocumentInfo(docId, document);
 
@@ -258,14 +262,20 @@ public class UserController extends Application {
 
         private final boolean doubleSided;
 
+        private final int minResolution;
+
+        private final Location location;
+
         public DocumentImpl(PrinterType printerType, PaperFormat format, File file, int numberOfCopies, LocalDate preferredDate,
-                boolean doubleSided) {
+                boolean doubleSided, Integer minResolution, Location location) {
             this.printerType = printerType;
             this.format = format;
             this.file = file;
             this.numberOfCopies = numberOfCopies;
             this.preferredDate = preferredDate;
             this.doubleSided = doubleSided;
+            this.minResolution = minResolution;
+            this.location = location;
         }
 
         @Override
@@ -301,6 +311,16 @@ public class UserController extends Application {
         @Override
         public boolean isDoubleSided() {
             return doubleSided;
+        }
+
+        @Override
+        public int getMinResolution() {
+            return minResolution;
+        }
+
+        @Override
+        public Location getSourceLocation() {
+            return location;
         }
     }
 

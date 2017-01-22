@@ -18,6 +18,7 @@ import jade.proto.AchieveREInitiator;
 import jade.proto.ContractNetInitiator;
 import jade.util.Logger;
 import pl.edu.pw.eiti.wsd.printerweb.printer.LocationProvider;
+import pl.edu.pw.eiti.wsd.printerweb.printer.LocationProvider.Location;
 import pl.edu.pw.eiti.wsd.printerweb.printer.PrintersMap;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.DocumentStatus;
@@ -66,9 +67,17 @@ public class UserAgent extends Agent {
         }
 
         String docId = Integer.toString(idGenerator.getAndIncrement());
-        addBehaviour(new SchedulePrintingBehaviour(this, gui, map, locationProvider, docId, document));
+        addBehaviour(new SchedulePrintingBehaviour(this, gui, map, docId, document));
 
         return docId;
+    }
+
+    /**
+     * @return
+     *      Current location of this agent. Never null.
+     */
+    public Location getCurrentLocation() {
+        return locationProvider.getCurrentLocation();
     }
 
     /**
@@ -91,8 +100,8 @@ public class UserAgent extends Agent {
 
         private static final long serialVersionUID = -4012165633409728255L;
 
-        public SchedulePrintingBehaviour(UserAgent myUserAgent, UserController gui, PrintersMap map,
-                LocationProvider locationProvider, String docId, Document document) {
+        public SchedulePrintingBehaviour(UserAgent myUserAgent, UserController gui, PrintersMap map, String docId,
+                Document document) {
             super(myUserAgent);
 
             DocumentWrapper documentWrapper = new DocumentWrapper(docId, document);
@@ -110,7 +119,7 @@ public class UserAgent extends Agent {
 
             registerFirstState(new CheckPrinterManagerBehaviour(myUserAgent, gui), State.CHECK_PRINTER_MANAGER);
             registerState(new RequestDocumentPrintBehaviour(myUserAgent, gui, documentWrapper), State.REQUEST_PRINT_DOCUMENT);
-            registerState(new SelectPrinterManagerBehaviour(myUserAgent, map, locationProvider), State.SELECT_PRINTER_MANAGER);
+            registerState(new SelectPrinterManagerBehaviour(myUserAgent, map), State.SELECT_PRINTER_MANAGER);
             registerState(new WaitForDocStatusChangesBehaviour(myUserAgent, gui, documentWrapper),
                     State.WAIT_FOR_DOC_STATUS_CHANGES);
             registerLastState(new InformFailedBehaviour(myUserAgent, gui, documentWrapper), State.INFORM_FAILED);
@@ -280,7 +289,7 @@ public class UserAgent extends Agent {
                 if (msg != null) {
                     String content = msg.getContent();
                     String[] contents = content.split(";");
-                    
+
                     if (msg.getPerformative() == ACLMessage.INFORM) {
                         DocumentStatus status = DocumentStatus.valueOf(contents[0]);
                         switch (status) {
@@ -370,21 +379,18 @@ public class UserAgent extends Agent {
 
             private final PrintersMap map;
 
-            private final LocationProvider locationProvider;
-
             private int exitStatus = Event.PRINTER_MANAGER_NOT_FOUND;
 
-            public SelectPrinterManagerBehaviour(UserAgent myUserAgent, PrintersMap map, LocationProvider locationProvider) {
+            public SelectPrinterManagerBehaviour(UserAgent myUserAgent, PrintersMap map) {
                 super(myUserAgent, new ACLMessage(ACLMessage.CFP));
                 this.myUserAgent = myUserAgent;
                 this.map = map;
-                this.locationProvider = locationProvider;
             }
 
             @SuppressWarnings("rawtypes")
             @Override
             protected Vector prepareCfps(ACLMessage cfp) {
-                Set<AID> printersNearby = map.getPrintersNearby(locationProvider.getCurrentLocation());
+                Set<AID> printersNearby = map.getPrintersNearby(myUserAgent.getCurrentLocation());
                 if (!printersNearby.isEmpty()) {
                     printersNearby.forEach(printer -> cfp.addReceiver(printer));
                     cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);

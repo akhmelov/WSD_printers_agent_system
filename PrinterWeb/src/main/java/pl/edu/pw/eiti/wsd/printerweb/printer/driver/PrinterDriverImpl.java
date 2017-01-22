@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import jade.domain.FIPAAgentManagement.FailureException;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
 import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver.PrinterEvent.Type;
-import pl.edu.pw.eiti.wsd.printerweb.printer.gui.PrinterController;
 
 public class PrinterDriverImpl implements PrinterDriver, Runnable {
 
@@ -28,8 +27,8 @@ public class PrinterDriverImpl implements PrinterDriver, Runnable {
 
     public PrinterDriverImpl(PrinterInfo printerInfo) {
         this.printerInfo = printerInfo;
-//        PrinterController view = new PrinterController(this);
-//        view.show();
+        // PrinterController view = new PrinterController(this);
+        // view.show();
         this.executor = Executors.newSingleThreadExecutor();
         startExecution();
     }
