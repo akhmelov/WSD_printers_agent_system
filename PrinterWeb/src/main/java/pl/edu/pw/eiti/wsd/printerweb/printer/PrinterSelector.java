@@ -2,12 +2,8 @@ package pl.edu.pw.eiti.wsd.printerweb.printer;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import jade.core.AID;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
@@ -15,67 +11,44 @@ import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver.PrinterInfo;
 import pl.edu.pw.eiti.wsd.printerweb.printer.driver.PrinterDriver.PrinterInfo.PrinterType;
 
 public class PrinterSelector {
-    
+
     private LocationProvider locationProvider;
 
     public PrinterSelector(LocationProvider locationProvider) {
         this.locationProvider = locationProvider;
     }
 
-    private final Comparator<PrinterOffer> byResolutionCopmarator = new Comparator<PrinterSelector.PrinterOffer>() {
-
-        @Override
-        public int compare(PrinterOffer o1, PrinterOffer o2) {
-            return Integer.compare(o1.getPrinterInfo().getResolution(), o2.getPrinterInfo().getResolution()) * (-1);
-        }
-    };
-
-    private final Comparator<PrinterOffer> byQueueLengthComparator = new Comparator<PrinterSelector.PrinterOffer>() {
-
-        @Override
-        public int compare(PrinterOffer o1, PrinterOffer o2) {
-            return Integer.compare(o1.getPrinterInfo().getCurrentQueueLength(), o2.getPrinterInfo().getCurrentQueueLength());
-        }
-    };
-    private final Comparator<PrinterOffer> byPrintingTimeComparator = new Comparator<PrinterSelector.PrinterOffer>() {
-
-        @Override
-        public int compare(PrinterOffer o1, PrinterOffer o2) {
-            return Integer.compare(o1.getPrintingTime(), o2.getPrintingTime());
-        }
-    };
-    
-    private final Comparator<PrinterOffer> byDistanceComparator = new Comparator<PrinterSelector.PrinterOffer>() {
-
-        @Override
-        public int compare(PrinterOffer o1, PrinterOffer o2) {
-            return Integer.compare(o1.getDistance(), o2.getDistance());
-        }
-    };
-
     public AID selectOffer(Document document, List<PrinterOffer> offers) {
-        AID currentSelection = null;
 
-        Map<AID, Integer> offerRank = new HashMap<>();
         List<PrinterOffer> applicableOffers = filter(document, offers);
 
-        Collections.sort(applicableOffers, byResolutionCopmarator);
-        applyPoints(offerRank, applicableOffers);
+        Collections.sort(applicableOffers,
+                (o1, o2) -> Integer.compare(o1.getPrinterInfo().getResolution(), o2.getPrinterInfo().getResolution()) * (-1));
+        applyPoints(applicableOffers);
 
-        Collections.sort(applicableOffers, byQueueLengthComparator);
-        applyPoints(offerRank, applicableOffers);
+        Collections.sort(applicableOffers, (o1, o2) -> Integer.compare(o1.getPrinterInfo().getCurrentQueueLength(),
+                o2.getPrinterInfo().getCurrentQueueLength()));
+        applyPoints(applicableOffers);
 
         for (PrinterOffer printerOffer : applicableOffers) {
             printerOffer.setPrintingTime(calculatePrintingTime(document, printerOffer.getPrinterInfo()));
-            printerOffer.setDistance(locationProvider.calculateDistance(document.getSourceLocation(), printerOffer.getPrinterInfo().getLocation()));
+            printerOffer.setDistance(locationProvider.calculateDistance(document.getSourceLocation(),
+                    printerOffer.getPrinterInfo().getLocation()));
         }
-        Collections.sort(applicableOffers, byPrintingTimeComparator);
-        applyPoints(offerRank, applicableOffers);
-        
-        Collections.sort(applicableOffers, byDistanceComparator);
-        applyPoints(offerRank, applicableOffers);
-        
-        return currentSelection;
+        Collections.sort(applicableOffers, (o1, o2) -> Integer.compare(o1.getPrintingTime(), o2.getPrintingTime()));
+        applyPoints(applicableOffers);
+
+        Collections.sort(applicableOffers, (o1, o2) -> Integer.compare(o1.getDistance(), o2.getDistance()));
+        applyPoints(applicableOffers);
+
+        Collections.sort(applicableOffers, (o1, o2) -> Integer.compare(o1.getRank(), o2.getRank()) * (-1));
+
+        AID selection = null;
+        if (!applicableOffers.isEmpty()) {
+            selection = applicableOffers.get(0).getAID();
+        }
+
+        return selection;
     }
 
     private int calculatePrintingTime(Document document, PrinterInfo printerInfo) {
@@ -92,11 +65,15 @@ public class PrinterSelector {
         return jobTime;
     }
 
-    private void applyPoints(Map<AID, Integer> offerRank, List<PrinterOffer> applicableOffers) {
+    private void applyPoints(List<PrinterOffer> applicableOffers) {
         int points = 5;
         for (PrinterOffer printerOffer : applicableOffers) {
-            offerRank.put(printerOffer.getAID(), offerRank.get(printerOffer.getAID()) + points);
+            printerOffer.increaseRank(points);
             points -= 1;
+
+            if (points == 0) {
+                break;
+            }
         }
     }
 
@@ -144,14 +121,24 @@ public class PrinterSelector {
         private AID id;
 
         private PrinterInfo info;
-        
+
         private int printingTime;
-        
+
         private int distance;
+
+        private int rank = 0;
 
         public PrinterOffer(AID id, PrinterInfo info) {
             this.id = id;
             this.info = info;
+        }
+
+        private int getRank() {
+            return rank;
+        }
+
+        public void increaseRank(int points) {
+            this.rank += points;
         }
 
         public AID getAID() {
@@ -197,15 +184,14 @@ public class PrinterSelector {
             return printingTime;
         }
 
-        
         private void setPrintingTime(int printingTime) {
             this.printingTime = printingTime;
         }
-        
+
         private int getDistance() {
             return distance;
         }
-        
+
         private void setDistance(int distance) {
             this.distance = distance;
         }

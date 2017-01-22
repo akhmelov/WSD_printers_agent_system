@@ -2,6 +2,8 @@ package pl.edu.pw.eiti.wsd.printerweb.printer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +53,7 @@ public class PrinterAgent extends Agent implements PrinterListener {
 
     @Override
     protected void setup() {
-        printerDriver = new PrinterDriverImpl(new PrinterInfoImpl(getName()));
+        printerDriver = new PrinterDriverImpl(new PrinterInfoImpl(getName(), new LocationProvider()));
         printerDriver.addListener(this);
         addBehaviour(createManagerRequestServer());
         addBehaviour(new PrintRequestFromUserServerBehaviour(this, printerDriver));
@@ -268,8 +270,10 @@ public class PrinterAgent extends Agent implements PrinterListener {
                 List<PrinterOffer> offers = new ArrayList<>();
                 for (ACLMessage response : (Vector<ACLMessage>) responses) {
                     try {
-                        offers.add(new PrinterOffer(response.getSender(), (PrinterInfo) response.getContentObject()));
-                        msgBySender.put(response.getSender(), response);
+                        if (response.getPerformative() == ACLMessage.PROPOSE) {
+                            offers.add(new PrinterOffer(response.getSender(), (PrinterInfo) response.getContentObject()));
+                            msgBySender.put(response.getSender(), response);
+                        }
                     } catch (UnreadableException e) {
                         ACLMessage reply = response.createReply();
                         reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
@@ -490,8 +494,11 @@ public class PrinterAgent extends Agent implements PrinterListener {
 
         private final String name;
 
-        public PrinterInfoImpl(String name) {
+        private LocationProvider locationProvider;
+
+        public PrinterInfoImpl(String name, LocationProvider locationProvider) {
             this.name = name;
+            this.locationProvider = locationProvider;
         }
 
         @Override
@@ -511,62 +518,52 @@ public class PrinterAgent extends Agent implements PrinterListener {
 
         @Override
         public int getPrinterBlackEfficiency() {
-            // TODO Auto-generated method stub
-            return 0;
+            return 30;
         }
 
         @Override
         public int getResolution() {
-            // TODO Auto-generated method stub
-            return 0;
+            return 300;
         }
 
         @Override
         public Set<PaperFormat> getSupportedPaperFormats() {
-            // TODO Auto-generated method stub
-            return null;
+            return EnumSet.allOf(PaperFormat.class);
         }
 
         @Override
         public boolean isDoubleSidedSupported() {
-            // TODO Auto-generated method stub
             return false;
         }
 
         @Override
         public int getPaperContainerCapacity() {
-            // TODO Auto-generated method stub
-            return 0;
+            return 10;
         }
 
         @Override
         public int getPaperContainerActualCapacity() {
-            // TODO Auto-generated method stub
-            return 0;
+            return 10;
         }
 
         @Override
         public boolean isColorSupported() {
-            // TODO Auto-generated method stub
-            return false;
+            return true;
         }
 
         @Override
         public int getCurrentQueueLength() {
-            // TODO Auto-generated method stub
             return 0;
         }
 
         @Override
         public int getRefillTime() {
-            // TODO Auto-generated method stub
-            return 0;
+            return 10;
         }
 
         @Override
         public Location getLocation() {
-            // TODO Auto-generated method stub
-            return null;
+            return locationProvider.getCurrentLocation();
         }
     }
 

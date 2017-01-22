@@ -10,7 +10,7 @@ public class PrintersMap {
 
     public Set<AID> getPrintersNearby(Location location) {
         Set<AID> printers = new HashSet<>();
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < 2; ++i) {
             printers.add(new AID("negotiator" + i, AID.ISLOCALNAME));
         }
 

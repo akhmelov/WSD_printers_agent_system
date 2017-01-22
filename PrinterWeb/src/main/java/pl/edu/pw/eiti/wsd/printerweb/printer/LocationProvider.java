@@ -1,14 +1,14 @@
 package pl.edu.pw.eiti.wsd.printerweb.printer;
 
-import pl.edu.pw.eiti.wsd.printerweb.printer.LocationProvider.Location;
+import java.io.Serializable;
 
-public class LocationProvider {
+public class LocationProvider implements Serializable {
 
     public Location getCurrentLocation() {
         return new Location(1, 2, 3);
     }
 
-    public static class Location {
+    public static class Location implements Serializable {
 
         private int x;
 
@@ -36,7 +36,6 @@ public class LocationProvider {
     }
 
     public int calculateDistance(Location sourceLocation, Location location) {
-        // TODO Auto-generated method stub
-        return 0;
+        return 1;
     }
 }

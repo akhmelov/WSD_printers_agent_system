@@ -59,7 +59,7 @@ public class UserController extends Application {
 
     @FXML
     private TextField minResolution;
-    
+
     @FXML
     private ListView<String> returnInfoListView;
 
@@ -179,21 +179,31 @@ public class UserController extends Application {
         }
 
         Integer numbersCopy;
+        Integer resolution;
         try {
             numbersCopy = Integer.valueOf(numberOfCopies.getText());
-        } catch (NumberFormatException e){
+            resolution = Integer.valueOf(minResolution.getText());
+
+            if (resolution <= 0) {
+                resolution = 1;
+            }
+        } catch (NumberFormatException e) {
             numbersCopy = 1;
+            resolution = 1;
         }
-        Document document = new DocumentImpl(typeOfPrinterChoose.getValue(), paperFormatChoose.getValue(), choosenFile,
-                Integer.valueOf(numberOfCopies.getText()), preferredDate.getValue(), doubleSided.isSelected(), Integer.valueOf(minResolution.getText()), userAgent.getCurrentLocation());
-        String docId = userAgent.printDocument(document);
-        DocumentInfo docInfo = new DocumentInfo(docId, document);
 
-        scheduledDocuments.put(docId, docInfo);
-        scheduledDocumentsView.getItems().add(docInfo);
+        if (numbersCopy > 0) {
+            Document document = new DocumentImpl(typeOfPrinterChoose.getValue(), paperFormatChoose.getValue(), choosenFile,
+                    numbersCopy, preferredDate.getValue(), doubleSided.isSelected(), resolution, userAgent.getCurrentLocation());
+            String docId = userAgent.printDocument(document);
+            DocumentInfo docInfo = new DocumentInfo(docId, document);
 
-        choosenFile = null;
-        fileNameField.setText("");
+            scheduledDocuments.put(docId, docInfo);
+            scheduledDocumentsView.getItems().add(docInfo);
+
+            choosenFile = null;
+            fileNameField.setText("");
+        }
     }
 
     public void addDocumentStatusInfo(String docId, DocumentStatus status, String detail) {

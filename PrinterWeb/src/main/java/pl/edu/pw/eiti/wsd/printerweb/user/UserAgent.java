@@ -112,6 +112,8 @@ public class UserAgent extends Agent {
             registerDefaultTransition(State.SELECT_PRINTER_MANAGER, State.INFORM_FAILED);
             registerTransition(State.SELECT_PRINTER_MANAGER, State.CHECK_PRINTER_MANAGER, Event.PRINTER_MANAGER_SELECTED);
             registerDefaultTransition(State.REQUEST_PRINT_DOCUMENT, State.INFORM_FAILED);
+            registerTransition(State.REQUEST_PRINT_DOCUMENT, State.CHECK_PRINTER_MANAGER,
+                    Event.NO_RESPONSE);
             registerTransition(State.REQUEST_PRINT_DOCUMENT, State.WAIT_FOR_DOC_STATUS_CHANGES,
                     Event.PRINTER_MANAGER_ACCEPTED_DOCUMENT);
             registerDefaultTransition(State.WAIT_FOR_DOC_STATUS_CHANGES, State.INFORM_FAILED);
@@ -154,6 +156,8 @@ public class UserAgent extends Agent {
             private static final int PRINTER_MANAGER_ACCEPTED_DOCUMENT = 4;
 
             public static final int SUCCEED = 5;
+
+            public static final int NO_RESPONSE = 6;
         }
 
         private static class CheckPrinterManagerBehaviour extends OneShotBehaviour {
@@ -174,7 +178,7 @@ public class UserAgent extends Agent {
 
             @Override
             public void action() {
-                if (myUserAgent.getPrinterManager() != null) {
+                if (isPrinterManagerSelected()) {
                     gui.addStatusInfo("Połączony z " + myUserAgent.getPrinterManager().getName()); // TODO do not hardcode display
                                                                                                    // strings
                     exitStatus = Event.PRINTER_MANAGER_SELECTED;
@@ -182,6 +186,10 @@ public class UserAgent extends Agent {
                     gui.addStatusInfo("Rozłączony");
                     exitStatus = Event.PRINTER_MANAGER_NOT_SELECTED;
                 }
+            }
+
+            private boolean isPrinterManagerSelected() {
+                return myUserAgent.getPrinterManager() != null;
             }
 
             @Override
@@ -250,7 +258,7 @@ public class UserAgent extends Agent {
                     exitStatus = Event.PRINTER_MANAGER_ACCEPTED_DOCUMENT;
                 } else {
                     log.log(Level.SEVERE, "Printer manager did not agreed!");
-                    exitStatus = Event.FAILED;
+                    exitStatus = Event.NO_RESPONSE;
                 }
             }
 
