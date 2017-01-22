@@ -388,7 +388,7 @@ public class UserAgent extends Agent {
                 if (!printersNearby.isEmpty()) {
                     printersNearby.forEach(printer -> cfp.addReceiver(printer));
                     cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-                    cfp.setContent("PrintManagerRequest"); // TODO public constant
+                    cfp.setContent("PrintManagerRequest");
 
                     return super.prepareCfps(cfp);
                 }

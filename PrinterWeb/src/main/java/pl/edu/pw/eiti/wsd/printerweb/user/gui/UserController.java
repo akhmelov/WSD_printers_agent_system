@@ -174,8 +174,14 @@ public class UserController extends Application {
             return;
         }
 
+        Integer numbersCopy;
+        try {
+            numbersCopy = Integer.valueOf(numberOfCopies.getText());
+        } catch (NumberFormatException e){
+            numbersCopy = 1;
+        }
         Document document = new DocumentImpl(typeOfPrinterChoose.getValue(), paperFormatChoose.getValue(), choosenFile,
-                Integer.valueOf(numberOfCopies.getText()), preferredDate.getValue(), doubleSided.isSelected());
+                numbersCopy, preferredDate.getValue(), doubleSided.isSelected());
         String docId = userAgent.printDocument(document);
         DocumentInfo docInfo = new DocumentInfo(docId, document);
 

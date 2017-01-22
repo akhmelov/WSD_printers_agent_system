@@ -6,6 +6,7 @@ import java.util.Set;
 import jade.domain.FIPAAgentManagement.FailureException;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.Document;
 import pl.edu.pw.eiti.wsd.printerweb.printer.document.PaperFormat;
+import pl.edu.pw.eiti.wsd.printerweb.printer.gui.GuiInfo;
 
 public interface PrinterDriver {
 
@@ -19,6 +20,8 @@ public interface PrinterDriver {
 
         abstract void listen(PrinterEvent event);
     }
+
+    void setGuiInfoStatusListener(GuiInfo guiInfoStatus);
 
     public interface PrinterEvent {
 
