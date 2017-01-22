@@ -90,9 +90,11 @@ public class PrinterDriverImpl implements PrinterDriver, Runnable {
     }
 
     private void stopExecution() {
+        if(!(workingFuture.isDone() && workingFuture.isCancelled())) {
         if (!workingFuture.cancel(false)) {
             executor.shutdownNow();
             throw new RuntimeException("Cannot stop printer!");
+        }
         }
     }
 
@@ -152,7 +154,7 @@ public class PrinterDriverImpl implements PrinterDriver, Runnable {
         }
     }
 
-    public void setGuiInfoStatusListener(GuiInfo guiInfoStatus){
+    public void setGuiInfoStatusListener(GuiInfo guiInfoStatus) {
         guiInfo = guiInfoStatus;
     }
 
