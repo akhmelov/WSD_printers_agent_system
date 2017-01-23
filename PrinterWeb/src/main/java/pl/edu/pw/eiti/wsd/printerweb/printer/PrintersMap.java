@@ -68,7 +68,8 @@ public class PrintersMap {
                     });
                     if(lookingForPrinterCondition.isOk()) {
                         DFAgentDescription dfAgentDescription = result[i];
-                        printers.add(new AID(dfAgentDescription.getName().getName(), AID.ISLOCALNAME));
+                        String name = dfAgentDescription.getName().getLocalName();
+                        printers.add(new AID(name, AID.ISLOCALNAME));
                     }
                 }
                 if(printers.isEmpty())
