@@ -1,25 +1,18 @@
 package pl.edu.pw.eiti.wsd.printerweb.printer;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.Vector;
 
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.*;
+import jade.domain.FIPAException;
 import jade.domain.FIPANames;
-import jade.domain.FIPAAgentManagement.FailureException;
-import jade.domain.FIPAAgentManagement.NotUnderstoodException;
-import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
@@ -45,6 +38,8 @@ public class PrinterAgent extends Agent implements PrinterListener {
 
     private static final long serialVersionUID = 6504683624380808507L;
 
+    static final String AGENT_TYPE = "negotiator";
+
     private final Map<String, ACLMessage> scheduledTasks = new HashMap<>();
 
     private PrinterDriver printerDriver;
@@ -53,11 +48,70 @@ public class PrinterAgent extends Agent implements PrinterListener {
 
     @Override
     protected void setup() {
-        printerDriver = new PrinterDriverImpl(new PrinterInfoImpl(getName(), new LocationProvider()));
+        Object[] args = getArguments();
+        if(args.length != 4)
+            throw new IllegalStateException("Needs more arguments (paperFormat:A1-A3-A9,location:x-y-floor,type:[COLOR,BLACK],double:[yes,no])");
+        String papers[] = args[0].toString().split(":")[1].split("-");
+        Set<PaperFormat> paperFormats = new HashSet<>();
+        for(String str: papers){
+            paperFormats.add(PaperFormat.valueOf(str));
+        }
+
+        String locationsPar[] = args[1].toString().split(":")[1].split("-");
+        LocationProvider locationProvider = new LocationProvider(
+                Integer.valueOf(locationsPar[0]),
+                Integer.valueOf(locationsPar[1]),
+                Integer.valueOf(locationsPar[2]));
+
+        PrinterInfo.PrinterType printerType = PrinterInfo.PrinterType.valueOf(args[2].toString().split(":")[1]);
+
+        boolean isDouble = args[2].toString().split(":").equals("yes");
+
+        PrinterInfoImpl printerInfo = new PrinterInfoImpl(getName(), locationProvider, printerType, paperFormats);
+        printerDriver = new PrinterDriverImpl(printerInfo);
         printerDriver.addListener(this);
         addBehaviour(createManagerRequestServer());
         addBehaviour(new PrintRequestFromUserServerBehaviour(this, printerDriver));
         addBehaviour(new PrintRequestFromManagerServerBehaviour(this, printerDriver));
+
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType(AGENT_TYPE);
+        sd.setName(getName());
+
+        for(PaperFormat paperFormat: printerDriver.getInfo().getSupportedPaperFormats()){
+            Property property = new Property("supported_paper_format", paperFormat.name());
+            sd.addProperties(property);
+        }
+        Property property = new Property("location", printerDriver.getInfo().getLocation().serializeLocation());
+        sd.addProperties(property);
+
+        property = new Property("printer_type", printerDriver.getInfo().getPrinterType().name());
+        sd.addProperties(property);
+
+        property = new Property("double_side", true);
+        sd.addProperties(property);
+
+        dfd.addServices(sd);
+        try {
+            DFService.register(this, dfd);
+        }
+        catch (FIPAException fe) {
+            fe.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void takeDown() {
+        super.takeDown();
+
+        try {
+            DFService.deregister(this);
+        }
+        catch (FIPAException fe) {
+            fe.printStackTrace();
+        }
     }
 
     private static final class PrintRequestFromManagerServerBehaviour extends ContractNetResponder {
@@ -496,9 +550,15 @@ public class PrinterAgent extends Agent implements PrinterListener {
 
         private LocationProvider locationProvider;
 
-        public PrinterInfoImpl(String name, LocationProvider locationProvider) {
+        private PrinterType printerType;
+
+        private Set<PaperFormat> paperFormats;
+
+        public PrinterInfoImpl(String name, LocationProvider locationProvider, PrinterType printerType, Set<PaperFormat> paperFormats) {
             this.name = name;
             this.locationProvider = locationProvider;
+            this.printerType = printerType;
+            this.paperFormats = paperFormats;
         }
 
         @Override
@@ -508,7 +568,7 @@ public class PrinterAgent extends Agent implements PrinterListener {
 
         @Override
         public PrinterType getPrinterType() {
-            return PrinterType.COLOR;
+            return printerType;
         }
 
         @Override
@@ -528,7 +588,7 @@ public class PrinterAgent extends Agent implements PrinterListener {
 
         @Override
         public Set<PaperFormat> getSupportedPaperFormats() {
-            return EnumSet.allOf(PaperFormat.class);
+            return paperFormats;
         }
 
         @Override

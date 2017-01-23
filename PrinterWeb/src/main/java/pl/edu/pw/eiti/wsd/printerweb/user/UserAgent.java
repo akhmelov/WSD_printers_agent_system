@@ -121,7 +121,7 @@ public class UserAgent extends Agent {
 
             registerFirstState(new CheckPrinterManagerBehaviour(myUserAgent, gui), State.CHECK_PRINTER_MANAGER);
             registerState(new RequestDocumentPrintBehaviour(myUserAgent, gui, documentWrapper), State.REQUEST_PRINT_DOCUMENT);
-            registerState(new SelectPrinterManagerBehaviour(myUserAgent, map), State.SELECT_PRINTER_MANAGER);
+            registerState(new SelectPrinterManagerBehaviour(myUserAgent, map, documentWrapper), State.SELECT_PRINTER_MANAGER);
             registerState(new WaitForDocStatusChangesBehaviour(myUserAgent, gui, documentWrapper),
                     State.WAIT_FOR_DOC_STATUS_CHANGES);
             registerLastState(new InformFailedBehaviour(myUserAgent, gui, documentWrapper), State.INFORM_FAILED);
@@ -389,16 +389,23 @@ public class UserAgent extends Agent {
 
             private int exitStatus = Event.PRINTER_MANAGER_NOT_FOUND;
 
-            public SelectPrinterManagerBehaviour(UserAgent myUserAgent, PrintersMap map) {
+            private final DocumentWrapper documentWrapper;
+
+            public SelectPrinterManagerBehaviour(UserAgent myUserAgent, PrintersMap map, DocumentWrapper documentWrapper) {
                 super(myUserAgent, new ACLMessage(ACLMessage.CFP));
                 this.myUserAgent = myUserAgent;
                 this.map = map;
+                this.documentWrapper = documentWrapper;
             }
 
             @SuppressWarnings("rawtypes")
             @Override
             protected Vector prepareCfps(ACLMessage cfp) {
-                Set<AID> printersNearby = map.getPrintersNearby(myUserAgent.getCurrentLocation());
+//                Set<AID> printersNearby = map.getPrintersNearby(myUserAgent.getCurrentLocation());
+
+                Set<AID> printersNearby = map.getPrintersNearby(myUserAgent.getCurrentLocation(), myAgent
+                        , documentWrapper.getDocument().getPaperFormat()
+                        , documentWrapper.getDocument().getPrinterType(), 10);
                 if (!printersNearby.isEmpty()) {
                     printersNearby.forEach(printer -> cfp.addReceiver(printer));
                     cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
