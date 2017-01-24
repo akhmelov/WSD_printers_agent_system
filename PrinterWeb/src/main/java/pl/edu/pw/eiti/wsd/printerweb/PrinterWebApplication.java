@@ -20,7 +20,7 @@ public class PrinterWebApplication {
             String agents = "userAgent:" + UserAgent.class.getName();
 //            for(int i = 0; i < 2; ++i) {
             agents += ";negotiator" + 0 + ":" + PrinterAgent.class.getName() + "(paper:A1-A5-A7,location:2-3-5,type:BLACK,double:yes)";
-            agents += ";negotiator" + 1 + ":" + PrinterAgent.class.getName() + "(paper:A1-A5-A7,location:4-5-5,type:BLACK,double:yes)";
+            agents += ";negotiator" + 1 + ":" + PrinterAgent.class.getName() + "(paper:A1-A5-A7,location:4-5-5,type:COLOR,double:yes)";
             agents += ";negotiator" + 2 + ":" + PrinterAgent.class.getName() + "(paper:A1-A5-A7,location:8-7-5,type:COLOR,double:yes)";
 //        }
         jadeArgs.add(agents);

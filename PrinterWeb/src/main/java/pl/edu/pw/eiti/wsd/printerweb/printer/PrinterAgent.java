@@ -335,7 +335,7 @@ public class PrinterAgent extends Agent implements PrinterListener {
                     }
                 }
 
-                offers.add(new PrinterOffer(printerAgent.getAID(), myPrinter.getInfo()));
+//                offers.add(new PrinterOffer(printerAgent.getAID(), myPrinter.getInfo()));
 
                 try {
                     AID aid = selector.selectOffer(documentWrapper.getDocument(), offers);
